@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/m_h_settings" android:title="@string/settings" android:orderInCategory="1"></item>
+    <item android:id="@+id/m_h_about" android:title="@string/about" android:orderInCategory="2"></item>
+
+</menu>

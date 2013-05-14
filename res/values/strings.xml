@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Spirit SE</string>
+    <string name="action_settings">Settings</string>
+    <string name="loading">loading&#8230;</string>
+    <string name="title_activity_home">Home</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_conditions_of_use">Conditions Of Use</string>
+    <string name="conditions_of_use">First, thanks for trying this software. If you want to make it better or just say thanks, send your ideas or bug reports to michix5d@gmail.com. If you just want to swear about me or this app, please send it somewhere else.\n\nThis Application is licensed under Creative Commons Attribution-ShareAlike 3.0 unported (CC BY-SA 3.0). That means you can copy this app to your friends without getting in licensing trouble - please share it!\n\nThis App does not send any personal information. But when downloading contents via this app, information about your device will be sent:\n- display resolution and density\n- version of this app\n- an unique id (randomly generated)</string>
+    <string name="cou_decline">I can\'t read, don\'t want to read, can\'t understand or can\'t accept the conditions of use.</string>
+    <string name="cou_dont_want_to_read">I have not understood, can\'t or don\'t want to read the conditions of use but accept them.</string>
+    <string name="cou_accept">I\'ve read, understood the conditions of use and want to accept them.</string>
+    <string name="cou_come_on">Thanks for buying my old washing machine!\n\nJust a joke. Come on, the text isn\'t very long. Do you want to read it now?</string>
+    <string name="yes">yes</string>
+    <string name="sure">sure</string>
+    <string name="settings">Settings</string>
+    <string name="p_course_settings">Course Settings</string>
+
+    <string-array name="p_courses">
+        <item>BaI1</item>
+        <item>BaI2</item>
+        <item>BaI3</item>
+        <item>BaI4</item>
+        <item>BaI5</item>
+        <item>BaI6</item>
+        <item>BaIS1</item>
+        <item>BaIS2</item>
+        <item>BaIS3</item>
+        <item>BaIS4</item>
+        <item>BaIS5</item>
+        <item>BaIS6</item>
+        <item>BaMM1</item>
+        <item>BaMM2</item>
+        <item>BaMM3</item>
+        <item>BaMM4</item>
+        <item>BaMM5</item>
+        <item>BaMM6</item>
+        <item>BaWI1</item>
+        <item>BaWI2</item>
+        <item>BaWI3</item>
+        <item>BaWI4</item>
+        <item>BaWI5</item>
+        <item>BaWI6</item>
+        <item>MaI1</item>
+        <item>MaI2</item>
+        <item>MaI3</item>
+        <item>MaI4</item>
+    </string-array>
+
+    <string name="p_course">Your course</string>
+    <string name="pref_select_course">Please select your course</string>
+    <string name="about">About</string>
+    <string name="title_activity_about">About Spirit</string>
+    <string name="spirit_logo">Spirit Logo</string>
+    <string name="a_about_text">You are using Spirit Second Edition, written by Michael Wodniok. Thanks for trying and using this app. Contact for ideas and bug reports: michix5d@gmail.com\n\nUsed tools:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- My Sony St25i</string>
+    <string name="a_view_cou">view conditions of use</string>
+    <string name="p_filter_news">Filter news by course</string>
+    <string name="p_schedule">Schedule</string>
+    <string name="p_download_schedule">Download schedule</string>
+    <string name="p_download_schedule_summary">Warning: deletes already edited schedule</string>
+    <string name="p_edit_lectures">Edit lectures</string>
+    <string name="p_edit_events">Edit events</string>
+    <string name="p_set_group_filters">Set group filters</string>
+
+    <string-array name="l_splashes">
+        <item>24053</item>
+        <item>presented in DOUBLEVISION\n(when drunk)</item>
+        <item>always beta!</item>
+        <item>this idea was stolen from Minecraft</item>
+        <item>this place is DEAD</item>
+        <item>indead.</item>
+        <item>fascinating!</item>
+        <item>with unbelievably amazing soundtrack!</item>
+        <item>Your ad here!</item>
+        <item>parking position.</item>
+        <item>these subtitles are very useless.</item>
+        <item>wazzup</item>
+        <item>it\'s currently one minute later than a minute before.</item>
+    </string-array>
+
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+</resources>
