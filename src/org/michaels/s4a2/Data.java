@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 public class Data {
 	public static final String PREF_NEWS_FILTER = "newsFilter";
 	public static final String PREF_UPDATE_INTERVAL = "updateInterval";
+	public static final String PREF_LAST_UPDATE = "lastSuccessfulUpdate";
 	public static SharedPreferences preferences = null;
 	public static SQLiteDatabase db = null;
 	
@@ -26,7 +27,7 @@ public class Data {
 	
 	static class DBOpenHelper extends SQLiteOpenHelper {
 
-		private final static int DB_VERSION = 3;
+		private final static int DB_VERSION = 4;
 		
 		public DBOpenHelper(Context context) {
 			super(context,"db",null,DB_VERSION);
@@ -65,7 +66,8 @@ public class Data {
 					"content TEXT NOT NULL, "+
 					"readstate INTEGER NOT NULL, "+
 					"dateutc INTEGER NOT NULL, "+
-					"invalidatutc INTEGER NOT NULL);");
+					"invalidatutc INTEGER NOT NULL, " +
+					"author TEXT NOT NULL);");
 			
 			db.execSQL("CREATE TABLE Usergroup ("+
 					"lecture INTEGER PRIMARY KEY, "+
@@ -102,6 +104,9 @@ public class Data {
 						"PRIMARY KEY(lecture, sparetime), "+
 						"FOREIGN KEY(lecture) REFERENCES Lecture(id), "+
 						"FOREIGN KEY(sparetime) REFERENCES Sparetime(id))");
+			}
+			if(oldVersion < 4){
+				db.execSQL("ALTER TABLE News ADD COLUMN author TEXT NOT NULL DEFAULT ''");
 			}
 		}
 		

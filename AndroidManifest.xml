@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><manifest android:versionCode="72" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" ?><manifest android:versionCode="99" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15"/>
 
@@ -20,6 +20,9 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
         </activity>
         <activity android:label="@string/title_activity_about" android:name="org.michaels.s4a2.AboutActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
+        </activity>
+        <activity android:label="@string/title_activity_news_view" android:name="org.michaels.s4a2.NewsViewActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
         </activity>
     </application>

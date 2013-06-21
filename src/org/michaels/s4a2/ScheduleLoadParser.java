@@ -1,11 +1,7 @@
 package org.michaels.s4a2;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
@@ -13,9 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -33,7 +27,7 @@ public class ScheduleLoadParser {
 			JSONObject event = schedule.optJSONObject(i);
 			if(event == null)
 				return false;
-			if(!validateJSONScheduleEvent(event))
+			if(!validateJSONScheduleEvent(event)) 
 				return false;
 		}
 		return true;

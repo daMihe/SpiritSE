@@ -17,7 +17,8 @@ public class LaunchActivity extends Activity {
 		setContentView(R.layout.activity_launch);
 		
 		String randomsplashes[] = getResources().getStringArray(R.array.l_splashes);
-		((TextView) findViewById(R.id.l_splash)).setText(randomsplashes[new Random(System.nanoTime()).nextInt(randomsplashes.length)]);
+		((TextView) findViewById(R.id.l_splash)).setText(
+				randomsplashes[new Random(System.nanoTime()).nextInt(randomsplashes.length)]);
 		((TextView) findViewById(R.id.l_version)).setText(SomeFunctions.generateVersion(this));
 		
 		final Thread waiter = new Thread(new Runnable() {
@@ -48,7 +49,15 @@ public class LaunchActivity extends Activity {
 					e.apply();
 				}
 				
-				Log.i("Spirit SE Information", "Device ID: "+Data.preferences.getString("deviceId", "00000000000000000000000000000000"));
+				Log.i("Spirit SE Information", "Device ID: "+
+						Data.preferences.getString("deviceId", "0"));
+				
+				if(System.currentTimeMillis()-Data.preferences.
+						getLong(Data.PREF_UPDATE_INTERVAL, 86400L) >
+						Data.preferences.getLong(Data.PREF_LAST_UPDATE, 0L)){
+					NewsLoadParser newsUpdater = new NewsLoadParser();
+					newsUpdater.loadAndParse(LaunchActivity.this);
+				}
 				
 				try {
 					waiter.join();

@@ -131,9 +131,8 @@ public class SettingsActivity extends FragmentActivity {
 			updateInterval.setAdapter(new ArrayAdapter<String>(getActivity(), 
 					android.R.layout.simple_spinner_item, 
 					getResources().getStringArray(R.array.sb_newsintervals)));
-			int currentSelection = Arrays.asList(getResources().
-					getIntArray(R.array.sb_newsintervals_values)).indexOf(
-							Data.preferences.getInt(Data.PREF_UPDATE_INTERVAL, 86400));
+			int currentSelection = intIndexOf(getResources().getIntArray(R.array.sb_newsintervals_values),
+					(int) Data.preferences.getLong(Data.PREF_UPDATE_INTERVAL, 86400));
 			if(currentSelection >= 0)
 				updateInterval.setSelection(currentSelection);
 			updateInterval.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -141,7 +140,7 @@ public class SettingsActivity extends FragmentActivity {
 				@Override
 				public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 					Editor e = Data.preferences.edit();
-					e.putInt(Data.PREF_UPDATE_INTERVAL, 
+					e.putLong(Data.PREF_UPDATE_INTERVAL, 
 							getResources().getIntArray(R.array.sb_newsintervals_values)[position]);
 					e.apply();
 				}
@@ -153,6 +152,14 @@ public class SettingsActivity extends FragmentActivity {
 					e.apply();
 				}
 			});
+		}
+		
+		private int intIndexOf(int[] array, int value){
+			for(int i = 0; i < array.length; i++){
+				if(array[i] == value)
+					return i;
+			}
+			return -1;
 		}
 
 		private void fillNewsFilterSpinner(View rootView) {
