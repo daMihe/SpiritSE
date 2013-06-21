@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
 
 public class Data {
+	public static final String PREF_NEWS_FILTER = "newsFilter";
+	public static final String PREF_UPDATE_INTERVAL = "updateInterval";
 	public static SharedPreferences preferences = null;
 	public static SQLiteDatabase db = null;
 	

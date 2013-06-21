@@ -15,41 +15,8 @@
     <string name="yes">yes</string>
     <string name="sure">sure</string>
     <string name="settings">Settings</string>
-    <string name="p_course_settings">Course Settings</string>
+    <string name="none">none</string>
 
-    <string-array name="p_courses">
-        <item>BaI1</item>
-        <item>BaI2</item>
-        <item>BaI3</item>
-        <item>BaI4</item>
-        <item>BaI5</item>
-        <item>BaI6</item>
-        <item>BaIS1</item>
-        <item>BaIS2</item>
-        <item>BaIS3</item>
-        <item>BaIS4</item>
-        <item>BaIS5</item>
-        <item>BaIS6</item>
-        <item>BaMM1</item>
-        <item>BaMM2</item>
-        <item>BaMM3</item>
-        <item>BaMM4</item>
-        <item>BaMM5</item>
-        <item>BaMM6</item>
-        <item>BaWI1</item>
-        <item>BaWI2</item>
-        <item>BaWI3</item>
-        <item>BaWI4</item>
-        <item>BaWI5</item>
-        <item>BaWI6</item>
-        <item>MaI1</item>
-        <item>MaI2</item>
-        <item>MaI3</item>
-        <item>MaI4</item>
-    </string-array>
-
-    <string name="p_course">Your course</string>
-    <string name="pref_select_course">Please select your course</string>
     <string name="about">About</string>
     <string name="title_activity_about">About Spirit</string>
     <string name="spirit_logo">Spirit Logo</string>
@@ -79,9 +46,20 @@
         <item>it\'s currently one minute later than a minute before.</item>
     </string-array>
 
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="s_title_basic">Basic</string>
+    <string name="s_title_schedule">Schedule</string>
+    <string name="s_title_section3">Section 3</string>
+    
+    <string-array name="sb_newsintervals">
+        <item>At every launch of the app</item>
+        <item>Every 6 hours</item>
+        <item>Every 24 hours</item>
+        <item>Every 2 days</item>
+        <item>One time a week</item>
+    </string-array>
+    
+    <string name="sb_newsinterval_desc">Update interval for news. News will be loaded at startup of the app in set interval.</string>
+    <string name="sb_newsfilter_desc">Filter for the displayed news.</string>
 
 </resources>

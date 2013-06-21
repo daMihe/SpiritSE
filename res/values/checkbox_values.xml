@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="courses">
+        <item>BaI1</item>
+        <item>BaI2</item>
+        <item>BaI3</item>
+        <item>BaI4</item>
+        <item>BaI5</item>
+        <item>BaI6</item>
+        <item>BaIS1</item>
+        <item>BaIS2</item>
+        <item>BaIS3</item>
+        <item>BaIS4</item>
+        <item>BaIS5</item>
+        <item>BaIS6</item>
+        <item>BaMM1</item>
+        <item>BaMM2</item>
+        <item>BaMM3</item>
+        <item>BaMM4</item>
+        <item>BaMM5</item>
+        <item>BaMM6</item>
+        <item>BaWI1</item>
+        <item>BaWI2</item>
+        <item>BaWI3</item>
+        <item>BaWI4</item>
+        <item>BaWI5</item>
+        <item>BaWI6</item>
+        <item>MaI1</item>
+        <item>MaI2</item>
+        <item>MaI3</item>
+        <item>MaI4</item>
+    </string-array>
+    <integer-array name="sb_newsintervals_values">
+        <item>0</item>
+        <item>21600</item>
+        <item>86400</item>
+        <item>172800</item>
+        <item>604800</item>
+    </integer-array>
+</resources>
