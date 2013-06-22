@@ -52,8 +52,8 @@ public class LaunchActivity extends Activity {
 				Log.i("Spirit SE Information", "Device ID: "+
 						Data.preferences.getString("deviceId", "0"));
 				
-				if(System.currentTimeMillis()-Data.preferences.
-						getLong(Data.PREF_UPDATE_INTERVAL, 86400L) >
+				if(System.currentTimeMillis()- (Data.preferences.
+						getLong(Data.PREF_UPDATE_INTERVAL, 86400L)*1000) >
 						Data.preferences.getLong(Data.PREF_LAST_UPDATE, 0L)){
 					NewsLoadParser newsUpdater = new NewsLoadParser();
 					newsUpdater.loadAndParse(LaunchActivity.this);

@@ -14,10 +14,12 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -68,8 +70,7 @@ public class SettingsActivity extends FragmentActivity {
 	}
 
 	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
+	 * This FragmentPagerAdapter divides Settings into a basic- and schedule-Fragment.
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -79,20 +80,17 @@ public class SettingsActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
-			Fragment fragment = new BasicSettingsFragment();
-			/*Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);*/
+			Fragment fragment = null;
+			switch(position){
+				case 0: fragment = new BasicSettingsFragment(); break;
+				case 1: fragment = new ScheduleSettingsFragment(); break;
+			}
 			return fragment;
 		}
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 1;
+			return 2;
 		}
 
 		@Override
@@ -109,10 +107,59 @@ public class SettingsActivity extends FragmentActivity {
 			return null;
 		}
 	}
+	
+	public static class ScheduleSettingsFragment extends Fragment {
+		private ScheduleLoadParser m_backgroundParser;
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.settings_schedule, container, false);
+			
+			prepareDownloadButton(rootView);
+			fillCourseSpinner(rootView);
+			
+			return rootView;
+		}
+
+		private void fillCourseSpinner(View rootView) {
+			Spinner scheduleCourseSpinner = (Spinner) rootView.findViewById(R.id.ss_course_spin);
+			scheduleCourseSpinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
+					android.R.layout.simple_spinner_item,
+					getResources().getStringArray(R.array.courses)));
+			int selection = Math.max(Arrays.asList(getResources().getStringArray(R.array.courses)).
+					indexOf(Data.preferences.getString(Data.PREF_SCHEDULE_COURSE, "BaI1")),0);
+			scheduleCourseSpinner.setSelection(selection);
+			scheduleCourseSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+					Editor e = Data.preferences.edit();
+					e.putString(Data.PREF_SCHEDULE_COURSE, 
+							getResources().getStringArray(R.array.courses)[pos]);
+					e.apply();
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {}
+			});
+		}
+
+		private void prepareDownloadButton(View rootView) {
+			Button downloadButton = (Button) rootView.findViewById(R.id.ss_download);
+			
+			downloadButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {		
+					m_backgroundParser = new ScheduleLoadParser(getActivity());
+					m_backgroundParser.execute(Data.preferences.
+							getString(Data.PREF_SCHEDULE_COURSE, "BaI1"));
+				}
+			});
+		}
+	}
 
 	/**
 	 * This Fragment shows very basic settings like Update interval, news filtering
-	 * @author Michael Wodniok
 	 */
 	public static class BasicSettingsFragment extends Fragment {
 

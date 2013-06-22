@@ -1,5 +1,10 @@
 package org.michaels.s4a2;
 
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -9,13 +14,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-public class ScheduleLoadParser {
+public class ScheduleLoadParser extends AsyncTask<String, Void, Void> {
+	
+	private Context m_context; 
+	private ProgressDialog m_waitDialog;
+	private final static String[] WEEKDAYS = new String[]{
+			"Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag" };
+	
+	/**
+	 * Constructor. The Context is used for displaying a progress dialog and generating the User-
+	 * Agent.
+	 * @param c A valid Context.
+	 */
+	public ScheduleLoadParser(Context c){
+		m_context = c;
+	}
 	
 	/**
 	 * Checks if schedule has correct format (spirit-rest 1.0).
@@ -57,7 +76,8 @@ public class ScheduleLoadParser {
 		if(appointment == null)
 			return false;
 		
-		if(!appointment.optString("day").matches("((Mon|Diens|Donners|Frei|Sams|Sonn)tag)|Mittwoch"))
+		if(!appointment.optString("day").
+				matches("((Mon|Diens|Donners|Frei|Sams|Sonn)tag)|Mittwoch"))
 			return false;
 		
 		JSONObject appointment_location = appointment.optJSONObject("location");
@@ -74,60 +94,140 @@ public class ScheduleLoadParser {
 		if(appointment_location_place.optString("room").isEmpty())
 			return false;
 		
-		if(!appointment.optString("time").matches("([0-1][0-9]|2[0-3])\\.[0-5][0-9]-([0-1][0-9]|2[0-3])\\.[0-5][0-9]"))
+		if(!appointment.optString("time").
+				matches("([0-1][0-9]|2[0-3])\\.([0-5][0-9])-([0-1][0-9]|2[0-3])\\.([0-5][0-9])"))
 			return false;
 		
 		if(!appointment.optString("week").matches("w|g|u"))
 			return false;
 		
-		if(!schedule_event.optString("group").matches("^$|.[0-9]?"))
+		if(!schedule_event.optString("group").matches("^.?([0-9]?)"))
 			return false;
 		
 		return true;
 	}
 	
-	public static void parseJSON(String raw_json, SQLiteDatabase db) throws IllegalArgumentException, JSONException{
-		JSONArray schedule_json = new JSONArray(raw_json);
-		if(!validateJSONSchedule(schedule_json))
+	/**
+	 * Parses the downloaded JSON and saves it into the database.
+	 * @param raw_json A String containing the JSON schedule
+	 * @throws IllegalArgumentException
+	 * @throws JSONException
+	 */
+	public static void parseJSON(String raw_json) throws IllegalArgumentException, JSONException{
+		JSONArray scheduleJson = new JSONArray(raw_json);
+		if(!validateJSONSchedule(scheduleJson))
 			throw new IllegalArgumentException("JSON is no valid schedule.");
 		
-	}
-	
-	public static String load(final String classname, final Context a){
-		AlertDialog.Builder ad = new AlertDialog.Builder(a);
-		ad.setMessage(R.string.loading);
-		ad.setCancelable(false);
-		AlertDialog dialog = ad.create();
-		dialog.show();
+		Data.db.execSQL("DELETE FROM Event");
+		Data.db.execSQL("DELETE FROM Usergroup");
+		Data.db.execSQL("DELETE FROM Lecture");
 		
-		final String rtn = "";
-		
-		Thread t = new Thread(new Runnable(){
-			public void run(){
-				HttpGet request = new HttpGet("http://spirit.fh-schmalkalden.de/rest/1.0/schedule?classname="+classname.toLowerCase());
-				request.setHeader("User-Agent", SomeFunctions.generateUserAgent(a));
-				DefaultHttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setSoTimeout(client.getParams(), 30000);
-				try {
-					HttpResponse response = client.execute(request);
-					rtn.concat(EntityUtils.toString(response.getEntity()));
-				} catch (Exception e) {
-					Log.e("Spirit SE Schedule Loader", e.getClass().getCanonicalName()+": "+e.getLocalizedMessage());
-				}
+		for(int i = 0; i<scheduleJson.length(); i++){
+			JSONObject event = scheduleJson.optJSONObject(i);
+			Cursor lecture = getLectureId(event);
+			if(!lecture.moveToFirst()){
+				Data.db.execSQL("INSERT INTO Lecture (title,ltype,lecturer) VALUES (?,?,?)",
+						new String[]{
+							event.optString("titleShort"),
+							(event.optString("eventType").equals("Vorlesung") ? 
+									FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
+							event.optJSONArray("member").optJSONObject(0).optString("name")
+						});
+				lecture.close();
+				lecture = getLectureId(event);
+				lecture.moveToFirst();
 			}
-		});
-		t.start();
+			
+			insertEventToDB(event, lecture);
+			lecture.close();
+		}
+	}
+
+	private static void insertEventToDB(JSONObject event, Cursor lecture)
+			throws JSONException {
+		JSONObject appointment = event.optJSONObject("appointment");
+		String weekString = appointment.optString("week");
+		int week = (weekString.equals("w") ? FHSSchedule.WEEK_BOTH : 
+			(weekString.equals("g") ? FHSSchedule.WEEK_EVEN : FHSSchedule.WEEK_ODD));
 		
-		while(t.isAlive()){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {}
+		Matcher daytimeMatcher = Pattern.compile(
+				"([0-1][0-9]|2[0-3])\\.([0-5][0-9])-([0-1][0-9]|2[0-3])\\.([0-5][0-9])").
+				matcher(appointment.optString("time"));
+		daytimeMatcher.matches();
+		int start = Arrays.asList(WEEKDAYS).indexOf(appointment.optString("day")) * 86400;
+		int end = start;
+		start += Integer.parseInt(daytimeMatcher.group(1)) * 3600 + 
+				Integer.parseInt(daytimeMatcher.group(2)) * 60;
+		end += Integer.parseInt(daytimeMatcher.group(3)) * 3600 + 
+				Integer.parseInt(daytimeMatcher.group(4)) * 60;
+		int len = end - start;
+		JSONObject place = appointment.optJSONObject("location").optJSONObject("place");
+		String room = place.getString("building")+place.getString("room");
+		Matcher groupMatcher = Pattern.compile("^.([0-9]?)").matcher(event.getString("group"));
+		int group = 0;
+		if(groupMatcher.matches()){
+				group = (groupMatcher.group(1).isEmpty() ? 0 : 
+					Integer.parseInt(groupMatcher.group(1)));
 		}
 		
-		Toast.makeText(a, rtn.length()+" Chars", Toast.LENGTH_LONG).show();
+		Data.db.execSQL("INSERT INTO Event (week,start,len,room,lecture,egroup) VALUES " +
+				"(?,?,?,?,?,?)", new String[]{
+					week+"",start+"",len+"",room,
+					lecture.getInt(lecture.getColumnIndex("id"))+"", group+""
+				});
+	}
+
+	private static Cursor getLectureId(JSONObject event) {
+		return Data.db.rawQuery(
+				"SELECT id FROM Lecture WHERE title=? AND ltype=? AND lecturer=?",
+				new String[]{
+					event.optString("titleShort"),
+					(event.optString("eventType").equals("Vorlesung") ? 
+							FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
+					event.optJSONArray("member").optJSONObject(0).optString("name")
+				});
+	}
+	
+	public String load(final String classname){
 		
-		return rtn;
+		String rtn = "";
+		HttpGet request = new HttpGet("http://spirit.fh-schmalkalden.de/rest/1.0/schedule?" +
+				"classname="+classname.toLowerCase(Locale.ENGLISH));
+		request.setHeader("User-Agent", SomeFunctions.generateUserAgent(m_context));
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpConnectionParams.setSoTimeout(client.getParams(), 30000);
+		try {
+			HttpResponse response = client.execute(request);
+			rtn = EntityUtils.toString(response.getEntity());
+		} catch (Exception e) {
+			Log.e("Spirit SE Schedule Loader", e.getClass().getCanonicalName()+": "+e.getLocalizedMessage());
+		}
 		
-		
+		return rtn;	
+	}
+	
+	@Override
+	protected void onPreExecute(){
+		m_waitDialog = new ProgressDialog(m_context);
+		m_waitDialog.setMessage(m_context.getString(R.string.loading));
+		m_waitDialog.setIndeterminate(true);
+		m_waitDialog.setCancelable(false);
+		m_waitDialog.show();
+	}
+
+	@Override
+	protected Void doInBackground(String... params) {
+		String raw_schedule = load(params[0]);
+		try {
+			parseJSON(raw_schedule);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	protected void onPostExecute(Void notUsed){
+		m_waitDialog.dismiss();
 	}
 }

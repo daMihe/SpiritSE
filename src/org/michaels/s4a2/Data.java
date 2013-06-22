@@ -10,6 +10,7 @@ public class Data {
 	public static final String PREF_NEWS_FILTER = "newsFilter";
 	public static final String PREF_UPDATE_INTERVAL = "updateInterval";
 	public static final String PREF_LAST_UPDATE = "lastSuccessfulUpdate";
+	public static final String PREF_SCHEDULE_COURSE = "course";
 	public static SharedPreferences preferences = null;
 	public static SQLiteDatabase db = null;
 	
@@ -27,7 +28,7 @@ public class Data {
 	
 	static class DBOpenHelper extends SQLiteOpenHelper {
 
-		private final static int DB_VERSION = 4;
+		private final static int DB_VERSION = 5;
 		
 		public DBOpenHelper(Context context) {
 			super(context,"db",null,DB_VERSION);
@@ -41,8 +42,7 @@ public class Data {
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 					"title TEXT NOT NULL, "+
 					"ltype INTEGER NOT NULL, "+
-					"lecturer TEXT NOT NULL, "+
-					"lgroup INTEGER);");
+					"lecturer TEXT NOT NULL);");
 			
 			db.execSQL("CREATE TABLE Event ("+
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
@@ -50,8 +50,8 @@ public class Data {
 					"start INTEGER NOT NULL, "+
 					"len INTEGER NOT NULL, "+
 					"room TEXT NOT NULL, "+
-					"building TEXT NOT NULL, "+
 					"lecture INTEGER NOT NULL," +
+					"egroup INTEGER," +
 					"FOREIGN KEY(lecture) REFERENCES Lecture(id));");
 			
 			db.execSQL("CREATE TABLE Sparetime ("+
@@ -108,6 +108,8 @@ public class Data {
 			if(oldVersion < 4){
 				db.execSQL("ALTER TABLE News ADD COLUMN author TEXT NOT NULL DEFAULT ''");
 			}
+			if(oldVersion < 5)
+				db.execSQL("ALTER TABLE Event ADD COLUMN egroup INTEGER");
 		}
 		
 	}
