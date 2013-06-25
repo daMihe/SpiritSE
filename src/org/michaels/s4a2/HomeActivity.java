@@ -28,6 +28,7 @@ public class HomeActivity extends Activity {
 				startActivity(new Intent(HomeActivity.this, NewsViewActivity.class));
 			}
 		});
+		((ScheduleView) findViewById(R.id.h_schedule)).resume();
 	}
 	
 	@Override
