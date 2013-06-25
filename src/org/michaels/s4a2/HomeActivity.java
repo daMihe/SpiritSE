@@ -29,6 +29,18 @@ public class HomeActivity extends Activity {
 			}
 		});
 	}
+	
+	@Override
+	public void onResume(){
+		((ScheduleView) findViewById(R.id.h_schedule)).resume();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		((ScheduleView) findViewById(R.id.h_schedule)).pause();
+		super.onPause();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
