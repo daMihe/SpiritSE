@@ -1,46 +1,34 @@
 package org.michaels.s4a2;
 
-import android.app.Activity;
+import java.util.Locale;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends FragmentActivity {
 
+	private HomeSectionsAdapter m_sectionsAdapter;
+	private ViewPager m_pager;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
-		
-		final ListView newsList = (ListView) findViewById(R.id.h_newslist);
-		newsList.setAdapter(new NewsListAdapter());
-		newsList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Data.db.execSQL("UPDATE News SET readstate = 1 WHERE id = ?",new String[]{id+""});
-				((NewsListAdapter) newsList.getAdapter()).updatedData();
-				NewsViewActivity.id = (int) id;
-				startActivity(new Intent(HomeActivity.this, NewsViewActivity.class));
-			}
-		});
-		((ScheduleView) findViewById(R.id.h_schedule)).resume();
-	}
-	
-	@Override
-	public void onResume(){
-		((ScheduleView) findViewById(R.id.h_schedule)).resume();
-		super.onResume();
-	}
-	
-	@Override
-	public void onPause(){
-		((ScheduleView) findViewById(R.id.h_schedule)).pause();
-		super.onPause();
+		m_sectionsAdapter = new HomeSectionsAdapter(getSupportFragmentManager());
+		m_pager = (ViewPager) findViewById(R.id.pager);
+		m_pager.setAdapter(m_sectionsAdapter);
 	}
 
 	@Override
@@ -62,4 +50,84 @@ public class HomeActivity extends Activity {
 		return false;
 	}
 
+	private class HomeSectionsAdapter extends FragmentPagerAdapter {
+		
+		public HomeSectionsAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int pos){
+			Fragment fragment = null;
+			switch(pos){
+				case 0: fragment = new ScheduleFragment(); break;
+				case 1: fragment = new NewsFragment(); break;
+			}
+			return fragment;
+		}
+
+		@Override
+		public int getCount() {
+			return 2;
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			Locale l = Locale.getDefault();
+			switch (position) {
+			case 0:
+				return getString(R.string.h_title_schedule).toUpperCase(l);
+			case 1:
+				return getString(R.string.h_title_news).toUpperCase(l);
+			}
+			return null;
+		}
+	}
+	
+	public static class NewsFragment extends Fragment {
+		private ListView m_newsList;
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+				Bundle savedInstanceState){
+			m_newsList = (ListView) inflater.inflate(R.layout.home_news, container, false);
+			
+			m_newsList.setAdapter(new NewsListAdapter());
+			m_newsList.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					Data.db.execSQL("UPDATE News SET readstate = 1 WHERE id = ?",new String[]{id+""});
+					((NewsListAdapter) m_newsList.getAdapter()).updatedData();
+					NewsViewActivity.id = (int) id;
+					startActivity(new Intent(getActivity(), NewsViewActivity.class));
+				}
+			});
+			
+			return m_newsList;
+		}
+	}
+	
+	public static class ScheduleFragment extends Fragment {
+		private ScheduleView m_schedule;
+		
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+				Bundle savedInstanceState){
+			m_schedule = (ScheduleView) inflater.inflate(R.layout.home_schedule, container,
+					false);
+			return m_schedule;
+		}
+		
+		@Override
+		public void onPause(){
+			super.onPause();
+			m_schedule.pause();
+		}
+		
+		@Override
+		public void onResume(){
+			m_schedule.resume();
+			super.onResume();
+		}
+	}
 }
