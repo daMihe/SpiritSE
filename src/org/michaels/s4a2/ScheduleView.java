@@ -12,6 +12,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -34,9 +35,10 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private Paint m_circleBgPaints[], m_circleTextPaint, m_normalTextPaint;
 	private FHSSchedule.Event m_nextEvent;
 	private static FHSSchedule.Event m_shownEvents[];
+	private static Calendar m_dayOfShownEvents;
 	private static boolean m_listingCurrentDay;
 	private RectF m_hourRect, m_minRect, m_secRect;
-	private PointF m_centerTimeCircle;
+	private PointF m_centerTimeCircle, m_fingerDownCoords;
 	private float m_circleTextHeight, m_eventTextHeight, m_radius;
 	
 	public ScheduleView(Context context) {
@@ -73,14 +75,17 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		m_normalTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		m_normalTextPaint.setColor(Color.parseColor("#ff0c0c0c"));
 		m_nextEvent = FHSSchedule.getNextEvent();
-		if(m_nextEvent != null)
+		if(m_nextEvent != null){
 			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_nextEvent.nextOccurence);
-		else
+			m_dayOfShownEvents = m_nextEvent.nextOccurence;
+		} else
 			m_shownEvents = new FHSSchedule.Event[0];
 		m_listingCurrentDay = true;
 		
 		m_holder = getHolder();
         m_holder.addCallback(this);
+        
+        setOnTouchListener(this);
 	}
 	
 
@@ -215,8 +220,11 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	private void drawEventlist(Canvas c) {
 		if(m_shownEvents.length > 0 && m_shownEvents[m_shownEvents.length-1].nextOccurence.
-				before(Calendar.getInstance()) && m_listingCurrentDay)
-			m_shownEvents = FHSSchedule.getEventsOfTheDay(FHSSchedule.getNextEvent().nextOccurence);
+				before(Calendar.getInstance()) && m_listingCurrentDay){
+			Calendar nextOccurence = FHSSchedule.getNextEvent().nextOccurence;
+			m_shownEvents = FHSSchedule.getEventsOfTheDay(nextOccurence);
+			m_dayOfShownEvents = nextOccurence;
+		}
 		for(int i=0; i<m_shownEvents.length; i++){
 			String current = String.format("%02d.%02d/%s: %s", 
 					m_shownEvents[i].nextOccurence.get(Calendar.HOUR_OF_DAY),
@@ -247,8 +255,21 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	}
 
 	@Override
-	public boolean onTouch(View arg0, MotionEvent arg1) {
-		// TODO Automatisch generierter Methodenstub
-		return false;
+	public boolean onTouch(View arg0, MotionEvent motion) {
+		Log.i("Motion",motion.toString());
+		if(motion.getAction() == MotionEvent.ACTION_DOWN)
+			m_fingerDownCoords = new PointF(motion.getX(),motion.getY());
+		if(motion.getAction() == MotionEvent.ACTION_UP){
+			if(motion.getY()-m_fingerDownCoords.y > getHeight()/10){
+				m_listingCurrentDay = false;
+				m_dayOfShownEvents.add(Calendar.DATE, -1);
+				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+			} else if(m_fingerDownCoords.y-motion.getY() > getHeight()/10) {
+				m_listingCurrentDay = false;
+				m_dayOfShownEvents.add(Calendar.DATE, 1);
+				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+			}
+		}
+		return true;
 	}
 }
