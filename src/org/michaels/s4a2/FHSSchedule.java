@@ -25,7 +25,7 @@ public class FHSSchedule {
 				return e;
 		}
 		for(int i=0; i<14; i++){
-			Log.i("DaytoSearch",start.toString());
+			//Log.i("DaytoSearch",start.toString());
 			start.add(Calendar.DAY_OF_MONTH, 1);
 			if(getEventsOfTheDay(start).length > 0)
 				return getEventsOfTheDay(start)[0];

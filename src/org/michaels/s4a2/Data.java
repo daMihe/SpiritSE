@@ -28,7 +28,7 @@ public class Data {
 	
 	static class DBOpenHelper extends SQLiteOpenHelper {
 
-		private final static int DB_VERSION = 5;
+		private final static int DB_VERSION = 6;
 		
 		public DBOpenHelper(Context context) {
 			super(context,"db",null,DB_VERSION);
@@ -80,6 +80,12 @@ public class Data {
 					"PRIMARY KEY(lecture, sparetime), "+
 					"FOREIGN KEY(lecture) REFERENCES Lecture(id), "+
 					"FOREIGN KEY(sparetime) REFERENCES Sparetime(id))");
+			
+			db.execSQL("CREATE TABLE Newsgroup (" +
+					"ngroup TEXT, " +
+					"News_id INTEGER, " +
+					"PRIMARY KEY(ngroup, News_id), " +
+					"FOREIGN KEY(News_id) REFERENCES News(id))");
 		}
 
 		@Override
@@ -110,6 +116,14 @@ public class Data {
 			}
 			if(oldVersion < 5)
 				db.execSQL("ALTER TABLE Event ADD COLUMN egroup INTEGER");
+			if(oldVersion < 6){
+				db.execSQL("CREATE TABLE Newsgroup (" +
+						"ngroup TEXT, " +
+						"News_id INTEGER, " +
+						"PRIMARY KEY(ngroup, News_id), " +
+						"FOREIGN KEY(News_id) REFERENCES News(id))");
+				db.execSQL("DELETE FROM News");
+			}
 		}
 		
 	}

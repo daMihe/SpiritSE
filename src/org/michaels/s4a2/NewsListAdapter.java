@@ -29,9 +29,14 @@ public class NewsListAdapter implements ListAdapter {
 		m_titles.clear();
 		m_ids.clear();
 		m_readstates.clear();
-		Cursor c = Data.db.rawQuery(
-				"SELECT id, title, readstate FROM News ORDER BY dateutc DESC",
-				null);
+		Cursor c;
+		if(Data.preferences.contains(Data.PREF_NEWS_FILTER))
+			c = Data.db.rawQuery("SELECT id, title, readstate FROM News, Newsgroup " +
+					"WHERE id = News_id AND ngroup = ? ORDER BY dateutc DESC",
+					new String[]{ Data.preferences.getString(Data.PREF_NEWS_FILTER,"") });
+		else
+			c = Data.db.rawQuery("SELECT id, title, readstate FROM News ORDER BY dateutc DESC",
+					null);
 		c.moveToFirst();
 		while(!c.isAfterLast()){
 			m_titles.add(c.getString(c.getColumnIndex("title")));

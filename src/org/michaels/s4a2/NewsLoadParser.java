@@ -34,7 +34,7 @@ public class NewsLoadParser {
 		JSONArray toParse = validate(load(context));
 		if(toParse == null)
 			return;
-		parseAndSave(toParse);
+		parseAndSave(toParse, context);
 		Log.i("","Updated News!");
 		Editor e = Data.preferences.edit();
 		e.putLong(Data.PREF_LAST_UPDATE, System.currentTimeMillis());
@@ -45,16 +45,10 @@ public class NewsLoadParser {
 	 * Parses the given JSONArray as array of news and saves them to the database. 
 	 * @param allNews A validated JSONArray of news
 	 */
-	private void parseAndSave(JSONArray allNews){
+	private void parseAndSave(JSONArray allNews,Context context){
 		for(int i = 0; i < allNews.length(); i++){
 			JSONObject currentObject = allNews.optJSONObject(i);
-			List<String> targetSemesters = Arrays.asList(currentObject.optString("semester").split(" "));
-			if(!targetSemesters.contains("semester") && 
-					Data.preferences.getString(Data.PREF_NEWS_FILTER, null) != null){
-				String usersSemester = Data.preferences.getString(Data.PREF_NEWS_FILTER, null).replace("Ba", "");
-				if(!targetSemesters.contains(usersSemester))
-					continue;
-			}
+			
 			SimpleDateFormat writeDateParser = new SimpleDateFormat("EEE, dd MMM yyyy H:m:s Z",Locale.ENGLISH);
 			Matcher eolDateParser = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)").
 					matcher(currentObject.optString("lifecycle"));
@@ -68,7 +62,34 @@ public class NewsLoadParser {
 				eolDate.set(GregorianCalendar.YEAR, Integer.parseInt(eolDateParser.group(3)));
 				
 				saveNewsEntry(currentObject, writeDate, eolDate);
+				parseAndSaveNewsgroups(currentObject, context);
 			} catch (ParseException e) {}
+		}
+	}
+	
+	/**
+	 * Parses and saves the target-courses into the database.
+	 * @param currentObject The JSONObject containing one news-message.
+	 * @param context A context for getting all courses if needed.
+	 */
+	private void parseAndSaveNewsgroups(JSONObject currentObject, Context context){
+		List<String> targetSemesters = Arrays.asList(currentObject.optString("semester").split(" "));
+		if(!targetSemesters.contains("semester")){
+			for(int i = 0; i < targetSemesters.size(); i++){
+				if(targetSemesters.get(i).isEmpty())
+					continue;
+				String course = targetSemesters.get(i);
+				if(!course.startsWith("Ma"))
+					course = "Ba"+course;
+				Data.db.execSQL("INSERT OR IGNORE INTO Newsgroup (ngroup, News_id) VALUES (?,?)",
+						new String[]{ course, ""+Integer.parseInt(currentObject.optString("nr")) });
+			}
+		} else {
+			String[] allCourses = context.getResources().getStringArray(R.array.courses);
+			for(String s:allCourses){
+				Data.db.execSQL("INSERT OR IGNORE INTO Newsgroup (ngroup, News_id) VALUES (?,?)",
+						new String[]{ s, ""+Integer.parseInt(currentObject.optString("nr")) });
+			}
 		}
 	}
 	

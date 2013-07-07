@@ -36,6 +36,12 @@ public class LaunchActivity extends Activity {
 			public void run(){
 				Data.init(LaunchActivity.this);
 				
+				if(!Data.preferences.getBoolean("acceptedUsingConditions", false)){
+					startActivity(new Intent(LaunchActivity.this, ConditionsOfUseActivity.class));
+					LaunchActivity.this.finish();
+					return;
+				}
+				
 				if(Data.preferences.getString("deviceId", "").isEmpty()){
 					String devId = "";
 					byte[] numbers = new byte[32];
@@ -62,11 +68,8 @@ public class LaunchActivity extends Activity {
 				try {
 					waiter.join();
 				} catch (InterruptedException e) {}
-				if(Data.preferences.getBoolean("acceptedUsingConditions", false))
-					startActivity(new Intent(LaunchActivity.this, HomeActivity.class));
-				else
-					startActivity(new Intent(LaunchActivity.this, ConditionsOfUseActivity.class));
 				
+				startActivity(new Intent(LaunchActivity.this, HomeActivity.class));
 				LaunchActivity.this.finish();
 			}
 		});

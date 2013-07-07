@@ -97,13 +97,17 @@ public class HomeActivity extends FragmentActivity {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Data.db.execSQL("UPDATE News SET readstate = 1 WHERE id = ?",new String[]{id+""});
-					((NewsListAdapter) m_newsList.getAdapter()).updatedData();
 					NewsViewActivity.id = (int) id;
 					startActivity(new Intent(getActivity(), NewsViewActivity.class));
 				}
 			});
 			
 			return m_newsList;
+		}
+		
+		public void onResume(){
+			super.onResume();
+			((NewsListAdapter) m_newsList.getAdapter()).updatedData();
 		}
 	}
 	

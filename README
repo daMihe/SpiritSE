@@ -5,7 +5,7 @@
                  █▒ █▒  █▒ █▒ █▒    █▒ █▒         █▒ █▒
               ███▒  ████▒  █▒ █▒    █▒  ███▒   ███▒  ████▒
                     █▒
-	                █▒
+                    █▒
 
 WARNING! This project is currently under early development and NOT stable. So do
 not expect too much features, the repository may changes very fast. The repo 
@@ -22,6 +22,7 @@ This is a new version of Spirit4Android based on a complete new code base.
 
 Current Features:
 - Showing news
+- Showing schedule (up to now, it's not modifyable)
 
 Requirements of the app:
 Android 4.0.3 (= API-Level 15) or higher

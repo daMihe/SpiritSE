@@ -39,7 +39,7 @@ public class ConditionsOfUseActivity extends Activity {
 			e.putBoolean("acceptedUsingConditions", true);
 			e.apply();
 			
-			startActivity(new Intent(ConditionsOfUseActivity.this,HomeActivity.class));
+			startActivity(new Intent(ConditionsOfUseActivity.this,LaunchActivity.class));
 			ConditionsOfUseActivity.this.finish();
 		}
 		

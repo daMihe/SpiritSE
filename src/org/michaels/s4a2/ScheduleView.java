@@ -91,6 +91,10 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		reMeasure(width, height);
+	}
+
+	private void reMeasure(int width, int height) {
 		Rect forMeasure = new Rect();
 		float neededSpace = getListHeight(width);
 		
@@ -112,7 +116,6 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 				( ((m_radius*2) * pow(CIRCLEFACTOR,5))/forMeasure.width() ) );
 		m_circleTextPaint.getTextBounds("00:00:00", 0, "00:00:00".length(), forMeasure);
 		m_circleTextHeight = forMeasure.height();
-		
 	}
 
 	private float getListHeight(int width) {
@@ -188,14 +191,12 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param c A Canvas to draw on.
 	 */
 	private void drawCountdown(Canvas c) {
-		float timeToDraw;
-		if(m_nextEvent != null)
-			timeToDraw = m_nextEvent.nextOccurence.getTimeInMillis() - System.currentTimeMillis();
-		else
-			timeToDraw = 0;
-		if(timeToDraw < 0){
-			m_nextEvent = FHSSchedule.getNextEvent();
-			timeToDraw = m_nextEvent.nextOccurence.getTimeInMillis() - System.currentTimeMillis();
+		float timeToDraw = 0;
+		for(FHSSchedule.Event e:m_shownEvents){
+			if(e.nextOccurence.after(Calendar.getInstance())){
+				timeToDraw = e.nextOccurence.getTimeInMillis() - System.currentTimeMillis();
+				break;
+			}
 		}
 		float hoursToDraw = timeToDraw/HOUR_IN_MSEC;
 		float minutesToDraw = (float) ((timeToDraw-Math.floor(hoursToDraw)*HOUR_IN_MSEC)/
@@ -257,6 +258,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	@Override
 	public boolean onTouch(View arg0, MotionEvent motion) {
 		Log.i("Motion",motion.toString());
+		// TODO reMeasure causes bugs
 		if(motion.getAction() == MotionEvent.ACTION_DOWN)
 			m_fingerDownCoords = new PointF(motion.getX(),motion.getY());
 		if(motion.getAction() == MotionEvent.ACTION_UP){
@@ -264,10 +266,12 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, -1);
 				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+				//reMeasure(getWidth(), getHeight());
 			} else if(m_fingerDownCoords.y-motion.getY() > getHeight()/10) {
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, 1);
 				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+				//reMeasure(getWidth(), getHeight());
 			}
 		}
 		return true;
