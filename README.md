@@ -17,10 +17,10 @@ complete new code base.
 
 Features:
 ---------
-- [X] Showing news
-- [X] Showing schedule
+- [x] Showing news
+- [x] Showing schedule
 - [ ] Modifying schedule
-- [X] Filter News
+- [x] Filter News
 
 Requirements of the app:
 ------------------------
