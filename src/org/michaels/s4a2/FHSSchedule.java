@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import android.database.Cursor;
-import android.util.Log;
 
 public class FHSSchedule {
 	public final static int LTYPE_LECTURE = 0;

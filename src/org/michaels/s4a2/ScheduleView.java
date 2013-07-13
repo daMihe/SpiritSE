@@ -1,5 +1,6 @@
 package org.michaels.s4a2;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
@@ -12,7 +13,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -31,31 +31,49 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private long m_lastDraw;
 	private Thread m_drawThread;
 	private boolean m_run;
+	private boolean m_doReMeasure;
 	private SurfaceHolder m_holder;
-	private Paint m_circleBgPaints[], m_circleTextPaint, m_normalTextPaint;
+	private Paint m_circleBgPaints[], m_circleTextPaint, m_dateTextPaint, m_normalTextPaint;
 	private FHSSchedule.Event m_nextEvent;
 	private static FHSSchedule.Event m_shownEvents[];
 	private static Calendar m_dayOfShownEvents;
 	private static boolean m_listingCurrentDay;
 	private RectF m_hourRect, m_minRect, m_secRect;
 	private PointF m_centerTimeCircle, m_fingerDownCoords;
-	private float m_circleTextHeight, m_eventTextHeight, m_radius;
+	private float m_circleTextHeight, m_dateTextHeight, m_eventTextHeight, m_radius;
 	
+	/**
+	 * Constructor. Needed for using in layouts.
+	 * @see init()
+	 */
 	public ScheduleView(Context context) {
 		super(context);
 		init();
 	}
 
+	/**
+	 * Constructor. Needed for using in layouts.
+	 * @see init()
+	 */
 	public ScheduleView(Context context, AttributeSet aset){
 		super(context, aset);
 		init();
 	}
 	
+	/**
+	 * Constructor. Needed for using in layouts.
+	 * @see init()
+	 */
 	public ScheduleView(Context context, AttributeSet aset, int defStyle){
 		super(context, aset, defStyle);
 		init();
 	}
 	
+	/**
+	 * The real construction work. This function is called from a constructor. It sets colors, 
+	 * initializes the schedule-graphic and adds the view to a holder and registers a touch-listener
+	 * for keeping up to date.
+	 */
 	private void init() {
 		m_run = false;
 		setBackgroundColor(Color.parseColor("#fff3f3f3"));
@@ -69,11 +87,18 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			g=Math.max(0, g - gStep);
 			b=Math.max(0, b - bStep);
 		}
+		
 		m_circleTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		m_circleTextPaint.setTextAlign(Align.CENTER);
 		m_circleTextPaint.setColor(Color.rgb(255-r, 255-g, 255-b));
+		
+		m_dateTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		m_dateTextPaint.setTextAlign(Align.CENTER);
+		m_dateTextPaint.setColor(Color.rgb(255-r, 255-g, 255-b));
+		
 		m_normalTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		m_normalTextPaint.setColor(Color.parseColor("#ff0c0c0c"));
+		
 		m_nextEvent = FHSSchedule.getNextEvent();
 		if(m_nextEvent != null){
 			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_nextEvent.nextOccurence);
@@ -81,6 +106,8 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		} else
 			m_shownEvents = new FHSSchedule.Event[0];
 		m_listingCurrentDay = true;
+		
+		m_doReMeasure = true;
 		
 		m_holder = getHolder();
         m_holder.addCallback(this);
@@ -91,9 +118,15 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		reMeasure(width, height);
+		m_doReMeasure = true;
 	}
 
+	/**
+	 * (Re-)Sizes the drawing-parameters for content (graphical clock and texts) to fit into the 
+	 * view.
+	 * @param width The new width of the view
+	 * @param height The new height of the view
+	 */
 	private void reMeasure(int width, int height) {
 		Rect forMeasure = new Rect();
 		float neededSpace = getListHeight(width);
@@ -116,12 +149,31 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 				( ((m_radius*2) * pow(CIRCLEFACTOR,5))/forMeasure.width() ) );
 		m_circleTextPaint.getTextBounds("00:00:00", 0, "00:00:00".length(), forMeasure);
 		m_circleTextHeight = forMeasure.height();
+		
+		float countdownTextWidth = forMeasure.width();
+		m_dateTextPaint.getTextBounds(getDateToDraw(), 0, getDateToDraw().length(), forMeasure);
+		m_dateTextPaint.setTextSize(m_dateTextPaint.getTextSize()*0.8f*
+				(countdownTextWidth/forMeasure.width()));
+		m_dateTextPaint.getTextBounds(getDateToDraw(), 0, getDateToDraw().length(), forMeasure);
+		m_dateTextHeight = forMeasure.height();
+		
+		m_doReMeasure = false;
+	}
+	
+	private String getDateToDraw(){
+		if(m_dayOfShownEvents == null)
+			return getContext().getString(R.string.hs_noeventsinschedule);
+		return DateFormat.getDateInstance(DateFormat.MEDIUM).format(m_dayOfShownEvents.getTime());
 	}
 
+	/**
+	 * Calculates the height of the schedule-list at bottom of the view.
+	 * @param width The width of the view
+	 * @return The calculated height.
+	 */
 	private float getListHeight(int width) {
 		Rect forMeasure = new Rect();
 		if(m_shownEvents.length > 0){
-			m_shownEvents = FHSSchedule.getEventsOfTheDay(FHSSchedule.getNextEvent().nextOccurence);
 			m_normalTextPaint.setTextSize(new Button(getContext()).getTextSize());
 			float widestText = 0f;
 			m_eventTextHeight = 0f;
@@ -145,6 +197,12 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			return(0f);
 	}
 	
+	/**
+	 * Just an abbreviation for (float) Math.pow(base,exp). 
+	 * @param base base-value of operation
+	 * @param exp exponent of operation
+	 * @return The result of base^exp as float.
+	 */
 	private static float pow(float base,float exp){
 		return (float) Math.pow(base, exp);
 	}
@@ -159,6 +217,9 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		pause();
 	}
 
+	/**
+	 * Stops the drawing thread.
+	 */
 	public void pause() {
 		if(m_run){
 			m_run = false;
@@ -170,6 +231,9 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 
+	/**
+	 * Starts the drawing thread.
+	 */
 	public void resume() {
 		if(!m_run){
 			m_run = true;
@@ -180,6 +244,9 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	
 	@Override
 	public void onDraw(Canvas c){
+		if(m_doReMeasure)
+			reMeasure(getWidth(), getHeight());
+		
 		drawCountdown(c);
 		drawEventlist(c);
 		
@@ -208,11 +275,19 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		c.drawArc(m_secRect, -90, (secondsToDraw/60)*360, true, m_circleBgPaints[2]);
 		c.drawCircle(m_centerTimeCircle.x, m_centerTimeCircle.y, m_radius*pow(CIRCLEFACTOR,3), 
 				m_circleBgPaints[3]);
-		String timeString = String.format("%02d:%02d:%02d", (int) hoursToDraw, (int) minutesToDraw, 
-				(int) secondsToDraw);
 		
-		c.drawText(timeString, m_centerTimeCircle.x, m_centerTimeCircle.y+m_circleTextHeight/2, 
-				m_circleTextPaint);
+		if(timeToDraw != 0){
+			c.drawText(String.format("%02d:%02d:%02d", (int) hoursToDraw, (int) minutesToDraw, 
+					(int) secondsToDraw), m_centerTimeCircle.x, m_centerTimeCircle.y + 
+					m_circleTextHeight/2, m_circleTextPaint);
+		} else {
+			c.drawText("--:--:--", m_centerTimeCircle.x, m_centerTimeCircle.y + 
+					m_circleTextHeight/2, m_circleTextPaint);
+		}
+		
+		c.drawText(getDateToDraw(), m_centerTimeCircle.x, m_centerTimeCircle.y +
+				m_circleTextHeight/2 + 5 + m_dateTextHeight, 
+				m_dateTextPaint);
 	}
 	
 	/**
@@ -242,6 +317,9 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 
+	/**
+	 * The run-method of the drawing thread.
+	 */
 	@Override
 	public void run() {
 		long timeToWait;
@@ -257,8 +335,6 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 
 	@Override
 	public boolean onTouch(View arg0, MotionEvent motion) {
-		Log.i("Motion",motion.toString());
-		// TODO reMeasure causes bugs
 		if(motion.getAction() == MotionEvent.ACTION_DOWN)
 			m_fingerDownCoords = new PointF(motion.getX(),motion.getY());
 		if(motion.getAction() == MotionEvent.ACTION_UP){
@@ -266,12 +342,18 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, -1);
 				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
-				//reMeasure(getWidth(), getHeight());
+				m_doReMeasure = true;
 			} else if(m_fingerDownCoords.y-motion.getY() > getHeight()/10) {
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, 1);
 				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
-				//reMeasure(getWidth(), getHeight());
+				m_doReMeasure = true;
+			} else if(Math.abs(m_fingerDownCoords.y-motion.getY()) < getHeight()/10 && 
+					Math.abs(m_fingerDownCoords.x-motion.getX()) < getWidth()/10){
+				m_listingCurrentDay = true;
+				m_dayOfShownEvents = FHSSchedule.getNextEvent().nextOccurence;
+				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+				m_doReMeasure = true;
 			}
 		}
 		return true;

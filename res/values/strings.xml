@@ -74,5 +74,6 @@
     <string name="ss_download">download schedule now</string>
    	<string name="h_title_schedule">schedule</string>
    	<string name="h_title_news">news</string> 
+   	<string name="hs_noeventsinschedule">no events in schedule</string>
 
 </resources>
