@@ -17,10 +17,9 @@ complete new code base.
 
 Features:
 ---------
-- [x] Showing news
-- [x] Showing schedule
-- [ ] Modifying schedule
-- [x] Filter News
+- Showing news
+- Showing schedule
+- Filter News
 
 Requirements of the app:
 ------------------------
