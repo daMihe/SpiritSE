@@ -74,6 +74,9 @@
     <string name="ss_download">download schedule now</string>
    	<string name="h_title_schedule">schedule</string>
    	<string name="h_title_news">news</string> 
-   	<string name="hs_noeventsinschedule">no events in schedule</string>
+   	<string name="hs_noeventsinschedule">no events in schedule</string> 
+   	<string name="ss_groups">groups</string>
+   	<string name="title_activity_group_setup">Group Setup</string>
+   	<string name="g_setgroupfor">Set group for "%s"</string>
 
 </resources>

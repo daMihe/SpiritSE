@@ -126,9 +126,13 @@ public class ScheduleLoadParser extends AsyncTask<String, Void, Void> {
 			JSONObject event = scheduleJson.optJSONObject(i);
 			Cursor lecture = getLectureId(event);
 			if(!lecture.moveToFirst()){
+				String title = event.optString("titleShort");
+				if(title.matches("^.*\\s[VÜ]$")){//endsWith(" Ü") || title.endsWith(" V")){
+					title = title.substring(0, title.length()-2);
+				}
 				Data.db.execSQL("INSERT INTO Lecture (title,ltype,lecturer) VALUES (?,?,?)",
 						new String[]{
-							event.optString("titleShort"),
+							title,
 							(event.optString("eventType").equals("Vorlesung") ? 
 									FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
 							event.optJSONArray("member").optJSONObject(0).optString("name")
@@ -178,10 +182,14 @@ public class ScheduleLoadParser extends AsyncTask<String, Void, Void> {
 	}
 
 	private static Cursor getLectureId(JSONObject event) {
+		String title = event.optString("titleShort");
+		if(title.matches("^.*\\s[VÜ]$")){
+			title = title.substring(0, title.length()-2);
+		}
 		return Data.db.rawQuery(
 				"SELECT id FROM Lecture WHERE title=? AND ltype=? AND lecturer=?",
 				new String[]{
-					event.optString("titleShort"),
+					title,
 					(event.optString("eventType").equals("Vorlesung") ? 
 							FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
 					event.optJSONArray("member").optJSONObject(0).optString("name")

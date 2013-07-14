@@ -15,14 +15,15 @@ This is a new version of
 [Spirit4Android](https://github.com/michiRoxx/Spirit4Android) based on a 
 complete new code base.
 
-Features:
----------
+Features
+--------
 - Showing news
 - Showing schedule
 - Filter News
+- Personalize event groups
 
-Requirements of the app:
-------------------------
+Requirements of the app
+-----------------------
 - Android 4.0.3 (= API-Level 15) or higher
 - Some space on your phone (currently less than 1MB)
 - Sometimes a internet connection (when downloading schedule or news)

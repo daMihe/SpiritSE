@@ -3,6 +3,7 @@ package org.michaels.s4a2;
 import java.util.Arrays;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -110,8 +111,19 @@ public class SettingsActivity extends FragmentActivity {
 			
 			prepareDownloadButton(rootView);
 			fillCourseSpinner(rootView);
+			prepareGroupsButton(rootView);
 			
 			return rootView;
+		}
+		
+		private void prepareGroupsButton(View rootView) {
+			rootView.findViewById(R.id.ss_groups).setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					getActivity().startActivity(new Intent(getActivity(),GroupSetupActivity.class));
+				}
+			});
 		}
 
 		private void fillCourseSpinner(View rootView) {

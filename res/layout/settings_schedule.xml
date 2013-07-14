@@ -22,4 +22,10 @@
         android:layout_height="wrap_content"
         android:text="@string/ss_download" />
 
+    <Button
+        android:id="@+id/ss_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ss_groups" />
+
 </LinearLayout>
