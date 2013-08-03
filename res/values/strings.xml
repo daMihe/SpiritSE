@@ -50,6 +50,9 @@
         <item>NOP</item>
         <item>for free!</item>
         <item>if you plan to shoplift, please let us know. thanks.</item>
+        <item>if you like this software, buy me a beer.</item>
+        <item>beerware</item>
+        <item>no refunds</item>
     </string-array>
 
     <string name="title_activity_settings">Settings</string>
@@ -72,11 +75,19 @@
     <string name="n_writtenby">Written by %1$s at %2$s</string>
     <string name="ss_course_desc">Your course for downloading and showing a schedule including countdown.</string>
     <string name="ss_download">download schedule now</string>
+    <string name="ss_edit">edit schedule</string>
    	<string name="h_title_schedule">schedule</string>
    	<string name="h_title_news">news</string> 
    	<string name="hs_noeventsinschedule">no events in schedule</string> 
    	<string name="ss_groups">groups</string>
    	<string name="title_activity_group_setup">Group Setup</string>
    	<string name="g_setgroupfor">Set group for "%s"</string>
+   	<string name="title_activity_schedule_editor">Advanced Schedule Editor</string>
+   	
+   	<string name="lecture">lecture</string>
+   	<string name="exercise">exercise</string>
+   	<string name="title">title</string>
+   	<string name="lecturer">lecturer</string>
+   	<string name="lecture_editevents">edit events</string>
 
 </resources>

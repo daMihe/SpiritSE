@@ -8,8 +8,6 @@ import java.util.regex.Pattern;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
 import android.webkit.WebView;
 
 public class NewsViewActivity extends Activity {
@@ -20,7 +18,6 @@ public class NewsViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_news_view);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		Cursor c = Data.db.rawQuery("SELECT title, content, dateutc, author FROM News WHERE id = ?",
 				new String[]{ id+"" });
@@ -74,16 +71,6 @@ public class NewsViewActivity extends Activity {
 		html = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; " +
 				"charset=UTF-8\" /></head><body>"+html+"</body></html>";
 		return html;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				NavUtils.navigateUpFromSameTask(this);
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 }

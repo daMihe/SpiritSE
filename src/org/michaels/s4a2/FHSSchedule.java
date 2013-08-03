@@ -39,14 +39,22 @@ public class FHSSchedule {
 		weekStart.set(Calendar.MINUTE, 0);
 		weekStart.set(Calendar.SECOND, 0);
 		weekStart.set(Calendar.MILLISECOND, 0);
+		if(weekStart.get(Calendar.MONTH) < Calendar.MARCH || weekStart.get(Calendar.MONTH) > Calendar.OCTOBER)
+			weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
+		if(weekStart.get(Calendar.MONTH) > Calendar.MARCH || weekStart.get(Calendar.MONTH) < Calendar.OCTOBER)
+			weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
 		if(weekStart.get(Calendar.MONTH) == Calendar.MARCH){
 			if(weekStart.get(Calendar.WEEK_OF_MONTH) == weekStart.
 					getActualMaximum(Calendar.WEEK_OF_MONTH))
+				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
+			else
 				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
 			return weekStart;
 		} else if(weekStart.get(Calendar.MONTH) == Calendar.OCTOBER){
 			if(weekStart.get(Calendar.WEEK_OF_MONTH) == weekStart.
 					getActualMaximum(Calendar.WEEK_OF_MONTH))
+				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
+			else
 				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
 			return weekStart;
 		} else

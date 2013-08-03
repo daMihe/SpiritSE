@@ -10,10 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -45,22 +43,11 @@ public class SettingsActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		m_SettingsSectionsAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		m_ViewPager = (ViewPager) findViewById(R.id.pager);
 		m_ViewPager.setAdapter(m_SettingsSectionsAdapter);
 
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -112,6 +99,7 @@ public class SettingsActivity extends FragmentActivity {
 			prepareDownloadButton(rootView);
 			fillCourseSpinner(rootView);
 			prepareGroupsButton(rootView);
+			prepareEditorButton(rootView);
 			
 			return rootView;
 		}
@@ -122,6 +110,17 @@ public class SettingsActivity extends FragmentActivity {
 				@Override
 				public void onClick(View v) {
 					getActivity().startActivity(new Intent(getActivity(),GroupSetupActivity.class));
+				}
+			});
+		}
+		
+		private void prepareEditorButton(View rootView) {
+			rootView.findViewById(R.id.ss_editor).setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					getActivity().startActivity(new Intent(getActivity(),
+							ScheduleEditorActivity.class));
 				}
 			});
 		}

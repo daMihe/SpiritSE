@@ -1,6 +1,6 @@
-<?xml version="1.0" ?><manifest android:versionCode="286" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" ?><manifest android:versionCode="317" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15"/>
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="17"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -16,16 +16,19 @@
         </activity>
         <activity android:label="@string/title_activity_conditions_of_use" android:name="org.michaels.s4a2.ConditionsOfUseActivity">
         </activity>
-        <activity android:label="@string/title_activity_settings" android:name="org.michaels.s4a2.SettingsActivity">
+        <activity android:label="@string/title_activity_settings" android:name="org.michaels.s4a2.SettingsActivity" android:parentActivityName="org.michaels.s4a2.HomeActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
         </activity>
-        <activity android:label="@string/title_activity_about" android:name="org.michaels.s4a2.AboutActivity">
+        <activity android:label="@string/title_activity_about" android:name="org.michaels.s4a2.AboutActivity" android:parentActivityName="org.michaels.s4a2.HomeActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
         </activity>
-        <activity android:label="@string/title_activity_news_view" android:name="org.michaels.s4a2.NewsViewActivity">
+        <activity android:label="@string/title_activity_news_view" android:name="org.michaels.s4a2.NewsViewActivity" android:parentActivityName="org.michaels.s4a2.HomeActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.HomeActivity"/>
         </activity>
-        <activity android:label="@string/title_activity_group_setup" android:name="org.michaels.s4a2.GroupSetupActivity">
+        <activity android:label="@string/title_activity_group_setup" android:name="org.michaels.s4a2.GroupSetupActivity" android:parentActivityName="org.michaels.s4a2.SettingsActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.SettingsActivity"/>
+        </activity>
+        <activity android:label="@string/title_activity_schedule_editor" android:name="org.michaels.s4a2.ScheduleEditorActivity" android:parentActivityName="org.michaels.s4a2.SettingsActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.SettingsActivity"/>
         </activity>
     </application>

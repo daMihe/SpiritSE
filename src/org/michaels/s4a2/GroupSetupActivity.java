@@ -6,9 +6,6 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,8 +20,7 @@ public class GroupSetupActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_group_setup);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.activity_list_layout);
 		GroupListAdapter adapter = new GroupListAdapter();
 		setListAdapter(adapter);
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -57,16 +53,6 @@ public class GroupSetupActivity extends ListActivity {
 			}
 		});
 		
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 	
 	private static class GroupListAdapter extends BaseAdapter {

@@ -18,8 +18,6 @@ public class AboutActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
-		// Show the Up button in the action bar.
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		TextView tex_name = (TextView) findViewById(R.id.a_name);
 		Button but_vcou = (Button) findViewById(R.id.a_conditions_of_use);
@@ -37,16 +35,6 @@ public class AboutActivity extends Activity {
 				startActivity(new Intent(AboutActivity.this,ConditionsOfUseActivity.class));
 			}
 		});
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 }
