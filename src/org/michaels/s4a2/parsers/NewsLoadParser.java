@@ -1,4 +1,4 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.parsers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +17,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.michaels.s4a2.Data;
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.SomeFunctions;
+import org.michaels.s4a2.R.array;
 
 import android.content.Context;
 import android.content.SharedPreferences.Editor;

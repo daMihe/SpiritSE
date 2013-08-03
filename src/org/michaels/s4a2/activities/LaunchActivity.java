@@ -1,6 +1,14 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.activities;
 
 import java.util.Random;
+
+import org.michaels.s4a2.Data;
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.SomeFunctions;
+import org.michaels.s4a2.R.array;
+import org.michaels.s4a2.R.id;
+import org.michaels.s4a2.R.layout;
+import org.michaels.s4a2.parsers.NewsLoadParser;
 
 import android.app.Activity;
 import android.content.Intent;

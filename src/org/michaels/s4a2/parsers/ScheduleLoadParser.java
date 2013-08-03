@@ -1,4 +1,4 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.parsers;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -13,6 +13,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.michaels.s4a2.Data;
+import org.michaels.s4a2.FHSSchedule;
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.SomeFunctions;
 
 import android.app.ProgressDialog;
 import android.content.Context;

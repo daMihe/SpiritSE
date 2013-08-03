@@ -1,7 +1,8 @@
 package org.michaels.s4a2;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,6 +26,8 @@ import android.widget.Button;
 public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback, Runnable, 
 		OnTouchListener {
 
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EE dd.MM.yy",
+			Locale.getDefault());
 	private static final int SEC_IN_MSEC = 1000, MIN_IN_MSEC = 60000, HOUR_IN_MSEC = 3600000;
 	private static final float CIRCLEFACTOR = 0.95f;
 	private static final long MAX_FPS_SLEEP = 50;
@@ -163,7 +166,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private String getDateToDraw(){
 		if(m_dayOfShownEvents == null)
 			return getContext().getString(R.string.hs_noeventsinschedule);
-		return DateFormat.getDateInstance(DateFormat.MEDIUM).format(m_dayOfShownEvents.getTime());
+		return DATE_FORMAT.format(m_dayOfShownEvents.getTime());
 	}
 
 	/**

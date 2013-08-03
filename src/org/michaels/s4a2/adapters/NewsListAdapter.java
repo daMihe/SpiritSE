@@ -1,10 +1,13 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.adapters;
 
 import java.util.ArrayList;
+
+import org.michaels.s4a2.Data;
 
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Typeface;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -70,10 +73,9 @@ public class NewsListAdapter implements ListAdapter {
 		if(convertView instanceof TextView)
 			rtn = (TextView) convertView;
 		else {
-			rtn = new TextView(parent.getContext());
+			rtn = (TextView) LayoutInflater.from(parent.getContext()).
+					inflate(android.R.layout.simple_list_item_1, parent, false);
 		}
-		
-		rtn.setTextAppearance(parent.getContext(), android.R.attr.textAppearanceMedium);
 		
 		if(!m_readstates.get(position))
 			rtn.setTypeface(null, Typeface.BOLD);

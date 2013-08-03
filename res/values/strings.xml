@@ -89,5 +89,18 @@
    	<string name="title">title</string>
    	<string name="lecturer">lecturer</string>
    	<string name="lecture_editevents">edit events</string>
+   	<string name="ase_delete_lecture">delete lecture with all contained events</string>
+   	<string name="ase_delete_event">delete this event</string>
+   	<string name="week">week</string>
+   	<string name="ase_start">start of event</string>
+   	<string name="ase_length">length in minutes</string>
+   	<string name="room">room</string>
+   	<string name="group">group</string>
+   	<string name="even">even</string>
+   	<string name="odd">odd</string>
+   	<string name="all">all</string>
+   	<string name="ase_none">&lt;none&gt;</string>
+   	<string name="ase_add_new_lecture">&lt;add new lecture&gt;</string>
+   	<string name="ase_add_new_event">&lt;add new event&gt;</string>
 
 </resources>

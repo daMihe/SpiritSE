@@ -1,9 +1,15 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.activities;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.michaels.s4a2.Data;
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.R.id;
+import org.michaels.s4a2.R.layout;
+import org.michaels.s4a2.R.string;
 
 import android.app.Activity;
 import android.database.Cursor;

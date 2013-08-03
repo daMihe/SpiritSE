@@ -1,4 +1,8 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.activities;
+
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.R.id;
+import org.michaels.s4a2.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;

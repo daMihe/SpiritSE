@@ -1,6 +1,15 @@
-package org.michaels.s4a2;
+package org.michaels.s4a2.activities;
 
 import java.util.Locale;
+
+import org.michaels.s4a2.Data;
+import org.michaels.s4a2.R;
+import org.michaels.s4a2.ScheduleView;
+import org.michaels.s4a2.R.id;
+import org.michaels.s4a2.R.layout;
+import org.michaels.s4a2.R.menu;
+import org.michaels.s4a2.R.string;
+import org.michaels.s4a2.adapters.NewsListAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
