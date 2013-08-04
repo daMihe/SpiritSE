@@ -3,12 +3,10 @@ package org.michaels.s4a2.activities;
 import java.util.Arrays;
 import java.util.Locale;
 
+import net.yougli.shakethemall.ColorPickerDialog;
+
 import org.michaels.s4a2.Data;
 import org.michaels.s4a2.R;
-import org.michaels.s4a2.R.array;
-import org.michaels.s4a2.R.id;
-import org.michaels.s4a2.R.layout;
-import org.michaels.s4a2.R.string;
 import org.michaels.s4a2.parsers.ScheduleLoadParser;
 
 import android.content.Intent;
@@ -90,8 +88,6 @@ public class SettingsActivity extends FragmentActivity {
 				return getString(R.string.s_title_basic).toUpperCase(l);
 			case 1:
 				return getString(R.string.s_title_schedule).toUpperCase(l);
-			case 2:
-				return getString(R.string.s_title_section3).toUpperCase(l);
 			}
 			return null;
 		}
@@ -108,8 +104,29 @@ public class SettingsActivity extends FragmentActivity {
 			fillCourseSpinner(rootView);
 			prepareGroupsButton(rootView);
 			prepareEditorButton(rootView);
+			prepareBgColorButton(rootView);
 			
 			return rootView;
+		}
+		
+		private void prepareBgColorButton(final View rootView){
+			rootView.findViewById(R.id.ss_color).setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					new ColorPickerDialog(rootView.getContext(), 
+							new ColorPickerDialog.OnColorChangedListener() {
+								@Override
+								public void colorChanged(String key, int color) {
+									Editor e = Data.preferences.edit();
+									e.putInt(Data.PREF_SCHEDULE_COLOR, color);
+									e.apply();
+								}
+					}, Data.PREF_SCHEDULE_COLOR, 
+					Data.preferences.getInt(Data.PREF_SCHEDULE_COLOR, 0xff007fff), 0xff007fff)
+					.show();
+				}
+			});
 		}
 		
 		private void prepareGroupsButton(View rootView) {

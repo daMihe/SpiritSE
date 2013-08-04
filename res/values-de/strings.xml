@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Spirit SE</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="loading">lade&#8230;</string>
+    <string name="title_activity_home">Home</string>
+    <string name="title_activity_conditions_of_use">Nutzungsbedingungen</string>
+    <string name="conditions_of_use">Vielen Dank für\'s ausprobieren, dieser Software. Wenn Du sie verbessern möchtest oder einfach nur Danke sagen möchtest, sende deine Ideen or gefundene Bugs an michix5d@gmail.com. Wenn Du mich, die App oder sonst irgendwen beschimpfen möchtest, sende das bitte an irgendwen anderes.\n\nDiese Applikation ist unter Creative Commons Attribution-ShareAlike 3.0 unported (CC BY-SA 3.0) lizenziert. Das bedeutet, dass kopieren erlaubt und sogar erwünscht ist - also schön an alle, die davon profitieren weitergeben!\n\nDie Applikation sendet keine persönlichen Daten. Wenn schon etwas herunterladen wird, dann wird folgendes mitgesendet:\n- Display-Größe und Auflösung\n- Verwendete Spirit SE Version\n- Eine eindeutige ID, die beim ersten Start zufällig generiert wird</string>
+    <string name="cou_decline">Ich kann die Bedingungen weder lesen, verstehen, noch will ich sie lesen und akzeptiere sie nicht.</string>
+    <string name="cou_dont_want_to_read">Ich kann die Bedingungen weder lesen, verstehen, noch will ich sie lesen aber akzeptiere sie trotzdem.</string>
+    <string name="cou_accept">Ich habe die Bedingungen gelesen und verstanden und möchte sie auch akzeptieren.</string>
+    <string name="cou_come_on">Danke, dass Du mir soeben meine alte, kaputte Waschmaschine abgekauft hast!\n\nNur ein Scherz. So lang ist der Text auch nicht, möchtest du ihn also lesen?</string>
+    <string name="yes">ja</string>
+    <string name="sure">sicher</string>
+    <string name="settings">Einstellungen</string>
+    <string name="none">kein</string>
+    <string name="about">Über</string>
+    <string name="title_activity_about">Über Spirit SE</string>
+    <string name="spirit_logo">Spirit Logo</string>
+    <string name="a_about_text">Du benutzt Spirit Second Edition, geschrieben von Michael Wodniok. Vielen Dank für die Nutzung dieser App. Kontakt für Ideen und zum Bugs melden: michix5d@gmail.com\n\nBenutzte Werkzeuge:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- Mein Sony St25i</string>
+    <string name="a_view_cou">Zeige Nutzungsbedingungen</string>
+    <string name="p_filter_news">Filtere Nachrichten nach folgendem Semester</string>
+    <string name="p_schedule">Stundenplan</string>
+    <string name="p_download_schedule">Stundenplan herunterladen</string>
+    <string name="p_download_schedule_summary">Achtung: Diese Aktion löscht vorherige Stundenpläne</string>
+    <string name="p_edit_lectures">Veranstaltungen bearbeiten</string>
+    <string name="p_edit_events">Events bearbeiten</string>
+    <string name="p_set_group_filters">Gruppenfilter setzen (Einfache Planeditor)</string>
+
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="s_title_basic">Nachrichten</string>
+    <string name="s_title_schedule">Stundenplan</string>
+
+    <string-array name="sb_newsintervals">
+        <item>Bei jedem Start der App</item>
+        <item>Alle 6 Stunden</item>
+        <item>Alle 24 Stunden</item>
+        <item>Alle 2 Tage</item>
+        <item>Einmal die Woche</item>
+    </string-array>
+
+    <string name="sb_newsinterval_desc">Updateinterval für die Nachrichten. Die Nachrichten werden nur beim Start der App geladen, jedoch nur in folgendem Rhythmus.</string>
+    <string name="sb_newsfilter_desc">Nachrichten nach Semester filtern.</string>
+    <string name="n_notfound">Sorry, Nachricht nicht gefunden.</string>
+    <string name="n_writtenby">Geschrieben von %1$s am %2$s</string>
+    <string name="ss_course_desc">Dein Semester um einen Stundenplan herunterzuladen und den auch anzuzeigen.</string>
+    <string name="ss_download">jetzt herunterladen</string>
+    <string name="ss_edit">Plan bearbeiten</string>
+   	<string name="h_title_schedule">Stundenplan</string>
+   	<string name="h_title_news">Nachrichten</string> 
+   	<string name="hs_noeventsinschedule">Stundenplan noch leer</string> 
+   	<string name="ss_groups">Gruppen</string>
+   	<string name="title_activity_group_setup">Gruppen</string>
+   	<string name="g_setgroupfor">Setze Gruppe für "%s"</string>
+   	<string name="title_activity_schedule_editor">Erweiterter Stundenplaneditor</string>
+   	
+   	<string name="lecture">Vorlesung</string>
+   	<string name="exercise">Übung</string>
+   	<string name="title">Titel</string>
+   	<string name="lecturer">Dozent</string>
+   	<string name="ase_delete_lecture">lösche komplette Veranstaltung</string>
+   	<string name="ase_delete_event">lösche dieses Event</string>
+   	<string name="week">Woche</string>
+   	<string name="ase_start">Anfang des Events</string>
+   	<string name="ase_length">Länge in Minuten</string>
+   	<string name="room">Raum</string>
+   	<string name="group">Gruppe</string>
+   	<string name="even">gerade</string>
+   	<string name="odd">ungerade</string>
+   	<string name="all">alle</string>
+   	<string name="ase_none">&lt;nichts ausgewählt&gt;</string>
+   	<string name="ase_add_new_lecture">&lt;neue Veranstaltung&gt;</string>
+   	<string name="ase_add_new_event">&lt;neues Event&gt;</string>
+   	
+   	<string name="settings_bg_color_confirm">Okay</string>
+   	<string name="settings_bg_color_dialog">Wähle eine Hintergrundfarbe</string>
+   	<string name="settings_default_color_confirm">Standard</string>
+   	<string name="ss_color">Anzeigefarbe ändern</string>
+
+   	<string-array name="days">
+        <item >Sonntag</item>
+        <item >Montag</item>
+        <item >Dienstag</item>
+        <item >Mittwoch</item>
+        <item >Donnerstag</item>
+        <item >Freitag</item>
+        <item >Samstag</item>
+        
+    </string-array>
+</resources>

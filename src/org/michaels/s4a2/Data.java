@@ -11,6 +11,7 @@ public class Data {
 	public static final String PREF_UPDATE_INTERVAL = "updateInterval";
 	public static final String PREF_LAST_UPDATE = "lastSuccessfulUpdate";
 	public static final String PREF_SCHEDULE_COURSE = "course";
+	public static final String PREF_SCHEDULE_COLOR = "scheduleColor";
 	public static SharedPreferences preferences = null;
 	public static SQLiteDatabase db = null;
 	

@@ -7,6 +7,8 @@ import org.michaels.s4a2.adapters.EventSpinAdapter;
 import org.michaels.s4a2.adapters.LectureSpinAdapter;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,33 +18,154 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.CheckBox;
+import android.widget.TimePicker;
 
 public class ScheduleEditorActivity extends Activity {
 	
 	private LectureSpinAdapter m_listAdapter;
+	private EventSpinAdapter m_eventAdapter;
 	private long m_lectureId;
+	private long m_eventId;
 	
 	@Override
 	protected void onCreate(Bundle b){
 		super.onCreate(b);
 		setContentView(R.layout.activity_ase);
+		
+		m_lectureId = LectureSpinAdapter.NONE;
+		m_eventId = EventSpinAdapter.NONE;
+		
 		prepareLectureSpinner();
 		prepareEventDaySpinner();
+		prepareEventChangeListeners();
+		prepareLectureChangeListeners();		
+		prepareDeleteButtons();
+		
+	}
+
+	private void prepareDeleteButtons() {
+		((Button) findViewById(R.id.ase_lecture_delete)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Data.db.delete("Event", "lecture = ?", new String[]{ m_lectureId+""});
+				Data.db.delete("Lecture", "id = ?", new String[]{ m_lectureId+""});
+				((Spinner) findViewById(R.id.ase_lecturelist)).setSelection(0);
+				m_listAdapter.updateLectures();
+			}
+		});
+		((Button) findViewById(R.id.ase_event_delete)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Data.db.delete("Event", "id = ?", new String[]{ m_eventId+""});
+				((Spinner) findViewById(R.id.ase_lecture_eventspinner)).setSelection(0);
+				m_eventAdapter.updateEvents();
+			}
+		});
+	}
+
+	private void prepareEventChangeListeners() {
+		OnCheckedChangeListener onCheck = new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				updateEvent();
+			}
+		};
+		((CheckBox) findViewById(R.id.ase_event_week_even)).setOnCheckedChangeListener(onCheck);
+		((CheckBox) findViewById(R.id.ase_event_week_odd)).setOnCheckedChangeListener(onCheck);
+		
+		((Spinner) findViewById(R.id.ase_event_start_day)).setOnItemSelectedListener(
+				new OnItemSelectedListener() {
+	
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					updateEvent();
+				}
+	
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {}
+			});
+		
+		OnClickListener onDate = new OnClickListener() {
+			
+			@Override
+			public void onClick(final View v) {
+				new TimePickerDialog(ScheduleEditorActivity.this, 
+						new OnTimeSetListener(){
+
+							@Override
+							public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+								((Button)v).setText(String.format("%02d:%02d", hourOfDay, minute));
+								updateEvent();
+							}
+							
+						}, 
+						Integer.parseInt(((Button)v).getText().toString().substring(0,2)), 
+						Integer.parseInt(((Button)v).getText().toString().substring(3)), 
+						true
+					).show();				
+			}
+		};
+		((Button) findViewById(R.id.ase_event_start_time)).setOnClickListener(onDate);
+		
+		OnFocusChangeListener onFocus = new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus)
+					return;
+				updateEvent();
+			}
+		};
+		((EditText) findViewById(R.id.ase_event_length)).setOnFocusChangeListener(onFocus);
+		((EditText) findViewById(R.id.ase_event_room)).setOnFocusChangeListener(onFocus);
+		((EditText) findViewById(R.id.ase_event_group)).setOnFocusChangeListener(onFocus);
+	}
+	
+	private void prepareLectureChangeListeners() {
+		OnClickListener radioListener = new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				updateLecture();
+			}
+		};
+		((RadioButton) findViewById(R.id.ase_lecture_type_lecture)).
+			setOnClickListener(radioListener);
+		((RadioButton) findViewById(R.id.ase_lecture_type_exercise)).
+			setOnClickListener(radioListener);
+		
+		OnFocusChangeListener onFocus = new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus)
+					return;
+				updateLecture();
+			}
+		};
+		((EditText) findViewById(R.id.ase_lecture_lecturer)).setOnFocusChangeListener(onFocus);
+		((EditText) findViewById(R.id.ase_lecture_title)).setOnFocusChangeListener(onFocus);
 	}
 	
 	private void prepareEventSpinner(long id){
-		final EventSpinAdapter esa = new EventSpinAdapter(this, id);
+		m_eventAdapter = new EventSpinAdapter(this, id);
 		final Spinner eventSpinner = (Spinner) findViewById(R.id.ase_lecture_eventspinner);
-		eventSpinner.setAdapter(esa);
+		eventSpinner.setAdapter(m_eventAdapter);
 		eventSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, final long id) {
+				m_eventId = id;
 				if(id == EventSpinAdapter.NONE){
 					enableEventSection(false);
 					return;
@@ -56,45 +179,16 @@ public class ScheduleEditorActivity extends Activity {
 					emptyEvent.put("egroup", 0);
 					emptyEvent.put("lecture", m_lectureId);
 					long newId = Data.db.insert("Event", null, emptyEvent);
-					esa.updateEvents();
-					for(int i = 2; i < esa.getCount(); i++){
-						if(esa.getItemId(i) == newId){
+					m_eventAdapter.updateEvents();
+					for(int i = 2; i < m_eventAdapter.getCount(); i++){
+						if(m_eventAdapter.getItemId(i) == newId){
 							eventSpinner.setSelection(i);
 							return;
 						}
 					}
 				}
 				
-				Cursor c = Data.db.rawQuery("SELECT week, start, len, room, egroup FROM Event WHERE"
-						+ " id = ?",  new String[]{ id+"" });
-				c.moveToFirst();
-				if(c.isAfterLast())
-					return;
-				int weekValue = c.getInt(c.getColumnIndex("week"));
-				((CheckBox) findViewById(R.id.ase_event_week_even)).setChecked(
-						(weekValue & FHSSchedule.WEEK_EVEN) != 0);
-				((CheckBox) findViewById(R.id.ase_event_week_odd)).setChecked(
-						(weekValue & FHSSchedule.WEEK_ODD) != 0);
-				
-				int start = c.getInt(c.getColumnIndex("start"));
-				int day = start / 86400;
-				int hour = (start % 86400) / 3600;
-				int min = (start % 3600) / 60;
-				((Spinner) findViewById(R.id.ase_event_start_day)).setSelection(day);
-				((TextView) findViewById(R.id.ase_event_start_time)).
-					setText(String.format("%02d:%02d", hour, min));
-				
-				int length = c.getInt(c.getColumnIndex("len"))/60;
-				((EditText) findViewById(R.id.ase_event_length)).setText(length+"");
-				
-				((EditText) findViewById(R.id.ase_event_room)).
-					setText(c.getString(c.getColumnIndex("room")));
-				
-				((EditText) findViewById(R.id.ase_event_group)).setText(
-						c.getInt(c.getColumnIndex("egroup")) + "");
-				
-				enableEventSection(true);
-				c.close();
+				setEventInputsFromDB(id);
 			}
 
 			@Override
@@ -102,6 +196,37 @@ public class ScheduleEditorActivity extends Activity {
 				enableEventSection(false);
 			}
 		});
+	}
+	
+	private void setEventInputsFromDB(final long id) {
+		Cursor c = Data.db.rawQuery("SELECT week, start, len, room, egroup FROM Event WHERE"
+				+ " id = ?",  new String[]{ id+"" });
+		c.moveToFirst();
+		int weekValue = c.getInt(c.getColumnIndex("week"));
+		((CheckBox) findViewById(R.id.ase_event_week_even)).setChecked(
+				(weekValue & FHSSchedule.WEEK_EVEN) != 0);
+		((CheckBox) findViewById(R.id.ase_event_week_odd)).setChecked(
+				(weekValue & FHSSchedule.WEEK_ODD) != 0);
+		
+		int start = c.getInt(c.getColumnIndex("start"));
+		int day = start / 86400;
+		int hour = (start % 86400) / 3600;
+		int min = (start % 3600) / 60;
+		((Spinner) findViewById(R.id.ase_event_start_day)).setSelection(day);
+		((Button) findViewById(R.id.ase_event_start_time)).
+			setText(String.format("%02d:%02d", hour, min));
+		
+		int length = c.getInt(c.getColumnIndex("len"))/60;
+		((EditText) findViewById(R.id.ase_event_length)).setText(length+"");
+		
+		((EditText) findViewById(R.id.ase_event_room)).
+			setText(c.getString(c.getColumnIndex("room")));
+		
+		((EditText) findViewById(R.id.ase_event_group)).setText(
+				c.getInt(c.getColumnIndex("egroup")) + "");
+		
+		enableEventSection(true);
+		c.close();
 	}
 	
 	private void prepareEventDaySpinner(){
@@ -139,18 +264,7 @@ public class ScheduleEditorActivity extends Activity {
 						}
 					}
 				}
-				Cursor c = Data.db.rawQuery("SELECT title, ltype, lecturer FROM Lecture WHERE "
-						+ "id = ?",	new String[]{id+""} );
-				c.moveToFirst();
-				
-				prepareLectureTitleInput(id, c);
-				prepareLecturerInput(id, c);
-				prepareTypeInput(id, c);
-				prepareEventSpinner(id);
-				
-				enableLectureSection(true);
-				
-				c.close();
+				setLectureInputsFromDB(id);
 			}
 
 			@Override
@@ -182,63 +296,81 @@ public class ScheduleEditorActivity extends Activity {
 		findViewById(R.id.ase_event_group).setEnabled(enable);
 		findViewById(R.id.ase_event_delete).setEnabled(enable);
 	}
-
-	private void prepareTypeInput(final long id, Cursor c) {
-		RadioButton lectureInput = (RadioButton) findViewById(R.id.ase_lecture_type_lecture);
-		RadioButton exerciseInput = (RadioButton) findViewById(R.id.ase_lecture_type_exercise);
-		
-		if(c.getInt(c.getColumnIndex("ltype")) == FHSSchedule.LTYPE_LECTURE)			
-			lectureInput.setChecked(true);
-		else
-			exerciseInput.setChecked(true);
-		
-		OnClickListener radioListener = new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				updateLecture(id);
-			}
-		};
-		lectureInput.setOnClickListener(radioListener);
-		exerciseInput.setOnClickListener(radioListener);
-	}
-
-	private void prepareLecturerInput(final long id, Cursor c) {
-		EditText lecturerEditor = (EditText) findViewById(R.id.ase_lecture_lecturer);
-		lecturerEditor.setText(c.getString(c.getColumnIndex("lecturer")));
-		lecturerEditor.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(hasFocus)
-					return;
-				updateLecture(id);
-			}
-		});
-	}
-
-	private void prepareLectureTitleInput(final long id, Cursor c) {
-		EditText titleEditor = (EditText) findViewById(R.id.ase_lecture_title);
-		titleEditor.setText(c.getString(c.getColumnIndex("title")));
-		titleEditor.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(hasFocus)
-					return;
-				updateLecture(id);
-			}
-		});
-	}
 	
-	private void updateLecture(long id){
+	private void updateLecture(){
+		if(m_lectureId == LectureSpinAdapter.NONE || m_listAdapter == null)
+			return;
+		
 		Data.db.execSQL("UPDATE Lecture SET title = ?, lecturer = ?, ltype = ? WHERE id = ?", 
 				new String[]{
 					((EditText)findViewById(R.id.ase_lecture_title)).getText().toString(), 
 					((EditText)findViewById(R.id.ase_lecture_lecturer)).getText().toString(),
 					(((RadioButton)findViewById(R.id.ase_lecture_type_lecture)).isSelected() ?
 							FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
-					id+""
+					m_lectureId+""
 				});
 		m_listAdapter.updateLectures();
+	}
+
+	private void updateEvent(){
+		if(m_eventId == EventSpinAdapter.NONE || m_eventAdapter == null)
+			return;
+		int week = 0;
+		if(((CheckBox) findViewById(R.id.ase_event_week_even)).isChecked())
+			week += FHSSchedule.WEEK_EVEN;
+		if(((CheckBox) findViewById(R.id.ase_event_week_odd)).isChecked())
+			week += FHSSchedule.WEEK_ODD;
+		
+		int start = ((Spinner) findViewById(R.id.ase_event_start_day)).getSelectedItemPosition() *
+				86400;
+		String startTimeStr = ((Button) findViewById(R.id.ase_event_start_time)).getText().
+				toString();
+		start += Integer.parseInt(startTimeStr.substring(0,2))*3600;
+		start += Integer.parseInt(startTimeStr.substring(3))*60;
+		
+		int length = 0;
+		try {
+			length = 60*Integer.parseInt(((EditText) findViewById(R.id.ase_event_length)).
+					getText().toString());
+		} catch(NumberFormatException e){}
+		
+		String room = ((EditText) findViewById(R.id.ase_event_room)).getText().toString();
+		
+		int group = 0;
+		try {
+			group = Integer.parseInt(((EditText) findViewById(R.id.ase_event_group)).
+					getText().toString());
+		} catch(NumberFormatException e){}
+		
+		Data.db.execSQL("UPDATE Event SET week = ?, start = ?, len = ?, room = ?, egroup = ? "
+				+ "WHERE id = ?", new String[]{
+						week+"", start+"", length+"", room, group+"", m_eventId+""
+				});
+		
+		m_eventAdapter.updateEvents();
+	}
+
+	
+	private void setLectureInputsFromDB(final long id) {
+		Cursor c = Data.db.rawQuery("SELECT title, ltype, lecturer FROM Lecture WHERE "
+				+ "id = ?",	new String[]{id+""} );
+		c.moveToFirst();
+		
+		((EditText) findViewById(R.id.ase_lecture_title)).
+				setText(c.getString(c.getColumnIndex("title")));
+
+		((EditText) findViewById(R.id.ase_lecture_lecturer)).
+				setText(c.getString(c.getColumnIndex("lecturer")));
+		
+		if(c.getInt(c.getColumnIndex("ltype")) == FHSSchedule.LTYPE_LECTURE)			
+			((RadioButton) findViewById(R.id.ase_lecture_type_lecture)).setChecked(true);
+		else
+			((RadioButton) findViewById(R.id.ase_lecture_type_exercise)).setChecked(true);
+		
+		prepareEventSpinner(id);
+		
+		enableLectureSection(true);
+		
+		c.close();
 	}
 }

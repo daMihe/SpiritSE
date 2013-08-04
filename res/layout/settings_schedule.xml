@@ -34,4 +34,10 @@
         android:layout_height="wrap_content"
         android:text="@string/ss_edit" />
 
+    <Button
+        android:id="@+id/ss_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ss_color" />
+
 </LinearLayout>

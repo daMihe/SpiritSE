@@ -81,7 +81,9 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		m_run = false;
 		setBackgroundColor(Color.parseColor("#fff3f3f3"));
 		m_circleBgPaints = new Paint[4];
-		int r=0,g=127,b=255;
+		int scheduleColor = Data.preferences.getInt(Data.PREF_SCHEDULE_COLOR, 0xff007fff);
+		int r=(scheduleColor & 0xff0000)>>16, g=(scheduleColor & 0xff00) >> 8, 
+				b=scheduleColor & 0xff;
 		int rStep = (int) (r*0.2), gStep = (int) (g*0.2), bStep = (int) (b*0.2);
 		for(int i = 0; i < m_circleBgPaints.length; i++){
 			m_circleBgPaints[i] = new Paint(Paint.ANTI_ALIAS_FLAG);
