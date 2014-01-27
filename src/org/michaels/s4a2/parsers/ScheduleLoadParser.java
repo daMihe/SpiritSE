@@ -131,7 +131,7 @@ public class ScheduleLoadParser extends AsyncTask<String, Void, Void> {
 			Cursor lecture = getLectureId(event);
 			if(!lecture.moveToFirst()){
 				String title = event.optString("titleShort");
-				if(title.matches("^.*\\s[VÜ]$")){//endsWith(" Ü") || title.endsWith(" V")){
+				if(title.matches("^.*\\s[VÜ]$")){
 					title = title.substring(0, title.length()-2);
 				}
 				Data.db.execSQL("INSERT INTO Lecture (title,ltype,lecturer) VALUES (?,?,?)",

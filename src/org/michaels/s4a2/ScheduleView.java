@@ -79,6 +79,24 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	 */
 	private void init() {
 		m_run = false;
+		colorize();		
+		m_nextEvent = FHSSchedule.getNextEvent();
+		if(m_nextEvent != null){
+			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_nextEvent.nextOccurence);
+			m_dayOfShownEvents = m_nextEvent.nextOccurence;
+		} else
+			m_shownEvents = new FHSSchedule.Event[0];
+		m_listingCurrentDay = true;
+		m_doReMeasure = true;		
+		m_holder = getHolder();
+        m_holder.addCallback(this);
+        setOnTouchListener(this);
+	}
+
+	/**
+	 * Sets/Calculates all needed colors.
+	 */
+	private void colorize() {
 		setBackgroundColor(Color.parseColor("#fff3f3f3"));
 		m_circleBgPaints = new Paint[4];
 		int scheduleColor = Data.preferences.getInt(Data.PREF_SCHEDULE_COLOR, 0xff007fff);
@@ -103,21 +121,6 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		
 		m_normalTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		m_normalTextPaint.setColor(Color.parseColor("#ff0c0c0c"));
-		
-		m_nextEvent = FHSSchedule.getNextEvent();
-		if(m_nextEvent != null){
-			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_nextEvent.nextOccurence);
-			m_dayOfShownEvents = m_nextEvent.nextOccurence;
-		} else
-			m_shownEvents = new FHSSchedule.Event[0];
-		m_listingCurrentDay = true;
-		
-		m_doReMeasure = true;
-		
-		m_holder = getHolder();
-        m_holder.addCallback(this);
-        
-        setOnTouchListener(this);
 	}
 	
 
@@ -133,22 +136,22 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	 * @param height The new height of the view
 	 */
 	private void reMeasure(int width, int height) {
-		Rect forMeasure = new Rect();
 		float neededSpace = getListHeight(width);
 		
 		m_centerTimeCircle = new PointF(width/2, (height-neededSpace)/2);
 		m_radius = Math.min(m_centerTimeCircle.x, m_centerTimeCircle.y);
 		
-		m_hourRect = new RectF(m_centerTimeCircle.x-m_radius, m_centerTimeCircle.y-m_radius,
-				m_centerTimeCircle.x+m_radius, m_centerTimeCircle.y+m_radius);
-		m_minRect = new RectF(m_centerTimeCircle.x-m_radius*CIRCLEFACTOR,
-				m_centerTimeCircle.y-m_radius*CIRCLEFACTOR, m_centerTimeCircle.x+m_radius*CIRCLEFACTOR,
-				m_centerTimeCircle.y+m_radius*CIRCLEFACTOR);
-		m_secRect = new RectF(m_centerTimeCircle.x-m_radius*pow(CIRCLEFACTOR,2), 
-				m_centerTimeCircle.y-m_radius*pow(CIRCLEFACTOR,2), 
-				m_centerTimeCircle.x+m_radius*pow(CIRCLEFACTOR,2),
-				m_centerTimeCircle.y+m_radius*pow(CIRCLEFACTOR,2));
+		reMeasureCircles();
+		reMeasureCountdown();
 		
+		m_doReMeasure = false;
+	}
+
+	/**
+	 * (Re-)Sizes the drawing-parameters for time and day of countdown.
+	 */
+	private void reMeasureCountdown() {
+		Rect forMeasure = new Rect();
 		m_circleTextPaint.getTextBounds("00:00:00", 0, "00:00:00".length(), forMeasure);
 		m_circleTextPaint.setTextSize(m_circleTextPaint.getTextSize()*
 				( ((m_radius*2) * pow(CIRCLEFACTOR,5))/forMeasure.width() ) );
@@ -161,8 +164,21 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 				(countdownTextWidth/forMeasure.width()));
 		m_dateTextPaint.getTextBounds(getDateToDraw(), 0, getDateToDraw().length(), forMeasure);
 		m_dateTextHeight = forMeasure.height();
-		
-		m_doReMeasure = false;
+	}
+
+	/**
+	 * (Re-)Sizes the circles (graphical clock).
+	 */
+	private void reMeasureCircles() {
+		m_hourRect = new RectF(m_centerTimeCircle.x-m_radius, m_centerTimeCircle.y-m_radius,
+				m_centerTimeCircle.x+m_radius, m_centerTimeCircle.y+m_radius);
+		m_minRect = new RectF(m_centerTimeCircle.x-m_radius*CIRCLEFACTOR,
+				m_centerTimeCircle.y-m_radius*CIRCLEFACTOR, m_centerTimeCircle.x+m_radius*CIRCLEFACTOR,
+				m_centerTimeCircle.y+m_radius*CIRCLEFACTOR);
+		m_secRect = new RectF(m_centerTimeCircle.x-m_radius*pow(CIRCLEFACTOR,2), 
+				m_centerTimeCircle.y-m_radius*pow(CIRCLEFACTOR,2), 
+				m_centerTimeCircle.x+m_radius*pow(CIRCLEFACTOR,2),
+				m_centerTimeCircle.y+m_radius*pow(CIRCLEFACTOR,2));
 	}
 	
 	private String getDateToDraw(){
@@ -237,7 +253,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	}
 
 	/**
-	 * Starts the drawing thread.
+	 * Starts the drawing thread. Restarts the activity if requested by other activities.
 	 */
 	public void resume() {
 		if(!m_run){
@@ -342,7 +358,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	public boolean onTouch(View arg0, MotionEvent motion) {
 		if(motion.getAction() == MotionEvent.ACTION_DOWN)
 			m_fingerDownCoords = new PointF(motion.getX(),motion.getY());
-		if(motion.getAction() == MotionEvent.ACTION_UP){
+		if(motion.getAction() == MotionEvent.ACTION_UP && m_dayOfShownEvents != null){
 			if(motion.getY()-m_fingerDownCoords.y > getHeight()/10){
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, -1);
@@ -362,5 +378,6 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			}
 		}
 		return true;
-	}
+	}	
+	
 }

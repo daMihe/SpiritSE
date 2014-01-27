@@ -7,6 +7,7 @@ import net.yougli.shakethemall.ColorPickerDialog;
 
 import org.michaels.s4a2.Data;
 import org.michaels.s4a2.R;
+import org.michaels.s4a2.ScheduleView;
 import org.michaels.s4a2.parsers.ScheduleLoadParser;
 
 import android.content.Intent;
@@ -53,7 +54,6 @@ public class SettingsActivity extends FragmentActivity {
 				getSupportFragmentManager());
 		m_ViewPager = (ViewPager) findViewById(R.id.pager);
 		m_ViewPager.setAdapter(m_SettingsSectionsAdapter);
-
 	}
 
 	/**

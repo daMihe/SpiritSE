@@ -37,6 +37,14 @@
             android:layout_height="wrap_content"
             android:text="@string/a_view_cou" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/a_donate"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/donatebg"
+            android:text="@string/a_donate" />
+
+    </LinearLayout> 
 
 </ScrollView>

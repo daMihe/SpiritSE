@@ -5,10 +5,6 @@ import java.util.Locale;
 import org.michaels.s4a2.Data;
 import org.michaels.s4a2.R;
 import org.michaels.s4a2.ScheduleView;
-import org.michaels.s4a2.R.id;
-import org.michaels.s4a2.R.layout;
-import org.michaels.s4a2.R.menu;
-import org.michaels.s4a2.R.string;
 import org.michaels.s4a2.adapters.NewsListAdapter;
 
 import android.content.Intent;
@@ -31,6 +27,8 @@ public class HomeActivity extends FragmentActivity {
 
 	private HomeSectionsAdapter m_sectionsAdapter;
 	private ViewPager m_pager;
+	private static boolean m_restartSchedule;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +36,7 @@ public class HomeActivity extends FragmentActivity {
 		m_sectionsAdapter = new HomeSectionsAdapter(getSupportFragmentManager());
 		m_pager = (ViewPager) findViewById(R.id.pager);
 		m_pager.setAdapter(m_sectionsAdapter);
+		m_restartSchedule = false;
 	}
 
 	@Override
@@ -50,6 +49,7 @@ public class HomeActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case R.id.m_h_settings:
+			m_restartSchedule = true;
 			startActivity(new Intent(this,SettingsActivity.class));
 			return true;
 		case R.id.m_h_about:
@@ -57,6 +57,15 @@ public class HomeActivity extends FragmentActivity {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	protected void onResume(){
+		if(m_restartSchedule){
+			finish();
+			startActivity(new Intent(this,HomeActivity.class));
+		}
+		super.onResume();
 	}
 
 	private class HomeSectionsAdapter extends FragmentPagerAdapter {

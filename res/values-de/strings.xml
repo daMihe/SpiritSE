@@ -20,6 +20,7 @@
     <string name="spirit_logo">Spirit Logo</string>
     <string name="a_about_text">Du benutzt Spirit Second Edition, geschrieben von Michael Wodniok. Vielen Dank für die Nutzung dieser App. Kontakt für Ideen und zum Bugs melden: michix5d@gmail.com\n\nBenutzte Werkzeuge:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- Mein Sony St25i</string>
     <string name="a_view_cou">Zeige Nutzungsbedingungen</string>
+    <string name="a_donate">ein Bier spenden</string>
     <string name="p_filter_news">Filtere Nachrichten nach folgendem Semester</string>
     <string name="p_schedule">Stundenplan</string>
     <string name="p_download_schedule">Stundenplan herunterladen</string>

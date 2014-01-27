@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import org.michaels.s4a2.Data;
 import org.michaels.s4a2.R;
 import org.michaels.s4a2.SomeFunctions;
-import org.michaels.s4a2.R.array;
 
 import android.content.Context;
 import android.content.SharedPreferences.Editor;

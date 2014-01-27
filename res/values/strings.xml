@@ -21,6 +21,7 @@
     <string name="spirit_logo">Spirit Logo</string>
     <string name="a_about_text">You are using Spirit Second Edition, written by Michael Wodniok. Thanks for trying and using this app. Contact for ideas and bug reports: michix5d@gmail.com\n\nUsed tools:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- My Sony St25i</string>
     <string name="a_view_cou">view conditions of use</string>
+    <string name="a_donate">donate a beer</string>
     <string name="p_filter_news">Filter news by course</string>
     <string name="p_schedule">Schedule</string>
     <string name="p_download_schedule">Download schedule</string>
@@ -53,7 +54,18 @@
         <item>if you like this software, buy me a beer.</item>
         <item>beerware</item>
         <item>no refunds</item>
+        <item>even made for uneasy riders</item>
+        <item>/bb|[^b]{2}/</item>
+        <item>over nine thousand!</item>
+        <item>m-m-m-m-m-multikill</item>
+        <item>Two people fell into the certain death!</item>
+        <item>like this app? in "about" you find a donation button.</item>
     </string-array>
+    
+    <string name="l_special_birthday_michi">HAPPY BIRTHDAY, Michael!</string>
+    <string name="l_special_christmas">hey, it\'s christmas in germany, why are you looking into spirit?!</string>
+    <string name="l_special_newyear">happy new year!</string>
+    
 
     <string name="title_activity_settings">Settings</string>
     <string name="s_title_basic">News</string>

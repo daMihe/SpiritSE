@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import org.michaels.s4a2.Data;
 import org.michaels.s4a2.R;
-import org.michaels.s4a2.R.layout;
-import org.michaels.s4a2.R.string;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
