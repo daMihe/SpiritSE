@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><manifest android:versionCode="377" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" ?><manifest android:versionCode="400" android:versionName="1.TealC" package="org.michaels.s4a2" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19"/>
 
@@ -31,6 +31,13 @@
         <activity android:label="@string/title_activity_schedule_editor" android:name="org.michaels.s4a2.activities.ScheduleEditorActivity"><!-- android:parentActivityName="org.michaels.s4a2.activities.SettingsActivity">!-->
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.michaels.s4a2.activities.SettingsActivity"/>
         </activity>
+        
+        <receiver android:label="SpiritSE" android:name="org.michaels.s4a2.WidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widgetinfo"/>
+        </receiver>
     </application>
 
 </manifest>

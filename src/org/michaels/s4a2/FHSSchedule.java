@@ -13,10 +13,20 @@ public class FHSSchedule {
 	public final static int WEEK_ODD = 1;
 	public final static int WEEK_BOTH = 3;
 	
+	
+	/**
+	 * Searches the next event from now in database.
+	 * @return The next FHSSchedule.Event or null, if there are no events in next two weeks.
+	 */
 	public static Event getNextEvent(){
 		return getNextEvent(Calendar.getInstance());
 	}
 	
+	/**
+	 * Searches the next event in database.
+	 * @param startSearch A calendar, where to start search.
+	 * @return The next FHSSchedule.Event after startSearch or null, if there are no events in next two weeks.
+	 */
 	public static Event getNextEvent(Calendar startSearch){
 		Calendar start = (Calendar) startSearch.clone();
 		for(Event e:getEventsOfTheDay(start)){
