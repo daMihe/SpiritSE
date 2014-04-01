@@ -19,7 +19,7 @@
     <string name="about">About</string>
     <string name="title_activity_about">About Spirit</string>
     <string name="spirit_logo">Spirit Logo</string>
-    <string name="a_about_text">You are using Spirit Second Edition, written by Michael Wodniok. Thanks for trying and using this app. Contact for ideas and bug reports: michix5d@gmail.com\n\nUsed tools:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- My Sony St25i</string>
+    <string name="a_about_text">You are using Spirit Second Edition, written by Michael Wodniok. Thanks for trying and using this app. Contact for ideas and bug reports: michix5d@gmail.com\nThanks to Marcus Denison, who wrote the first version of the spirit webservice. Also thanks to all contributors to the webservices. Special thanks to Christian \"Wingguard\" Meißner, Michael \"Moga\" Dragunski and Tobias Anhalt for testing on various devices.\n\nUsed tools:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape</string>
     <string name="a_view_cou">view conditions of use</string>
     <string name="a_donate">donate a beer</string>
     <string name="p_filter_news">Filter news by course</string>

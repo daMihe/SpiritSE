@@ -10,6 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.Path.FillType;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -31,6 +33,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private static final int SEC_IN_MSEC = 1000, MIN_IN_MSEC = 60000, HOUR_IN_MSEC = 3600000;
 	private static final float CIRCLEFACTOR = 0.95f;
 	private static final long MAX_FPS_SLEEP = 50;
+	private static final long HELP_THRESHOLD = 2000;
 	private long m_lastDraw;
 	private Thread m_drawThread;
 	private boolean m_run;
@@ -44,6 +47,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private RectF m_hourRect, m_minRect, m_secRect;
 	private PointF m_centerTimeCircle, m_fingerDownCoords;
 	private float m_circleTextHeight, m_dateTextHeight, m_eventTextHeight, m_radius;
+	private long m_timetohelp;
 	
 	/**
 	 * Constructor. Needed for using in layouts.
@@ -199,10 +203,12 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			float widestText = 0f;
 			m_eventTextHeight = 0f;
 			for(int i=0; i<m_shownEvents.length; i++){
-				String current = String.format("%02d.%02d/%s: %s", 
+				String current = String.format("%02d.%02d/%s: %s %s", 
 						m_shownEvents[i].nextOccurence.get(Calendar.HOUR_OF_DAY),
 						m_shownEvents[i].nextOccurence.get(Calendar.MINUTE),
-						m_shownEvents[i].room, m_shownEvents[i].name);
+						m_shownEvents[i].room, m_shownEvents[i].name, getContext().
+						getString(m_shownEvents[i].type == FHSSchedule.LTYPE_EXERCISE ? 
+								R.string.exercise : R.string.lecture));
 				m_normalTextPaint.getTextBounds(current,0,current.length(),forMeasure);
 				if(forMeasure.width() > widestText)
 					widestText = forMeasure.width();
@@ -270,6 +276,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		
 		drawCountdown(c);
 		drawEventlist(c);
+		drawHelp(c);
 		
 		m_lastDraw = System.currentTimeMillis();
 	}
@@ -323,10 +330,12 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			m_dayOfShownEvents = nextOccurence;
 		}
 		for(int i=0; i<m_shownEvents.length; i++){
-			String current = String.format("%02d.%02d/%s: %s", 
+			String current = String.format("%02d.%02d/%s: %s %s", 
 					m_shownEvents[i].nextOccurence.get(Calendar.HOUR_OF_DAY),
 					m_shownEvents[i].nextOccurence.get(Calendar.MINUTE),
-					m_shownEvents[i].room, m_shownEvents[i].name);
+					m_shownEvents[i].room, m_shownEvents[i].name, getContext().
+					getString(m_shownEvents[i].type == FHSSchedule.LTYPE_EXERCISE ? 
+							R.string.exercise : R.string.lecture));
 			if(m_shownEvents[i].nextOccurence.before(Calendar.getInstance()))
 				m_normalTextPaint.setAlpha(127);
 			else
@@ -334,7 +343,48 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 			c.drawLine(0, getHeight()-((m_shownEvents.length-i)*(m_eventTextHeight+3))-1, 
 					getWidth(), getHeight()-((m_shownEvents.length-i)*(m_eventTextHeight+3))-4, 
 					m_normalTextPaint);
-			c.drawText(current, 0, getHeight()-((m_shownEvents.length-1-i)*(m_eventTextHeight+3))-5, m_normalTextPaint);
+			c.drawText(current, 0, getHeight()-((m_shownEvents.length-1-i)*(m_eventTextHeight+3))-5,
+					m_normalTextPaint);
+		}
+	}
+	
+	private void drawHelp(Canvas c) {
+		if(m_timetohelp != 0 && m_timetohelp < System.currentTimeMillis()){
+			Paint overlayBackcolor = new Paint();
+			overlayBackcolor.setARGB(127, 255, 255, 255);
+			c.drawRect(0, 0, getWidth(), getHeight(), overlayBackcolor);
+			
+			Paint overlayFrontcolor = new Paint();
+			overlayFrontcolor.setColor(Color.BLACK);
+			overlayFrontcolor.setStrokeWidth(10);
+			overlayFrontcolor.setAntiAlias(true);
+			overlayFrontcolor.setStrokeCap(Paint.Cap.ROUND);
+			
+			float circleRadius = Math.min(getWidth(), getHeight())/5;
+			c.drawCircle(m_fingerDownCoords.x, m_fingerDownCoords.y, circleRadius,
+					overlayFrontcolor);
+			
+			overlayFrontcolor.setStyle(Paint.Style.STROKE);
+			Path topPath = new Path();
+			topPath.moveTo(m_fingerDownCoords.x-circleRadius, m_fingerDownCoords.y-circleRadius);
+			topPath.lineTo(m_fingerDownCoords.x, m_fingerDownCoords.y-2*circleRadius);
+			topPath.lineTo(m_fingerDownCoords.x+circleRadius, m_fingerDownCoords.y-circleRadius);
+			c.drawPath(topPath, overlayFrontcolor);
+			Path bottomPath = new Path();
+			bottomPath.moveTo(m_fingerDownCoords.x-circleRadius, m_fingerDownCoords.y+circleRadius);
+			bottomPath.lineTo(m_fingerDownCoords.x, m_fingerDownCoords.y+2*circleRadius);
+			bottomPath.lineTo(m_fingerDownCoords.x+circleRadius, m_fingerDownCoords.y+circleRadius);
+			c.drawPath(bottomPath, overlayFrontcolor);
+			
+			overlayFrontcolor.setStrokeWidth(0);
+			overlayFrontcolor.setTextSize(new Button(getContext()).getTextSize()*2);
+			float textStart = m_fingerDownCoords.x - circleRadius - 
+					(Math.max(overlayFrontcolor.measureText("+ 24h"),circleRadius)+5);
+			if(textStart < 0)
+				textStart = m_fingerDownCoords.x + circleRadius + 5;
+			c.drawText("+ 24h", textStart, m_fingerDownCoords.y-1.5f*circleRadius-overlayFrontcolor.ascent()/2, overlayFrontcolor);
+			c.drawText("0", textStart, m_fingerDownCoords.y-overlayFrontcolor.ascent()/2, overlayFrontcolor);
+			c.drawText("- 24h", textStart, m_fingerDownCoords.y+1.5f*circleRadius-overlayFrontcolor.ascent()/2, overlayFrontcolor);
 		}
 	}
 
@@ -356,26 +406,25 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 
 	@Override
 	public boolean onTouch(View arg0, MotionEvent motion) {
-		if(motion.getAction() == MotionEvent.ACTION_DOWN)
+		if(motion.getAction() == MotionEvent.ACTION_DOWN){
 			m_fingerDownCoords = new PointF(motion.getX(),motion.getY());
+			m_timetohelp = System.currentTimeMillis()+HELP_THRESHOLD;
+		}
 		if(motion.getAction() == MotionEvent.ACTION_UP && m_dayOfShownEvents != null){
 			if(motion.getY()-m_fingerDownCoords.y > getHeight()/10){
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, -1);
-				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
-				m_doReMeasure = true;
 			} else if(m_fingerDownCoords.y-motion.getY() > getHeight()/10) {
 				m_listingCurrentDay = false;
 				m_dayOfShownEvents.add(Calendar.DATE, 1);
-				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
-				m_doReMeasure = true;
 			} else if(Math.abs(m_fingerDownCoords.y-motion.getY()) < getHeight()/10 && 
 					Math.abs(m_fingerDownCoords.x-motion.getX()) < getWidth()/10){
 				m_listingCurrentDay = true;
 				m_dayOfShownEvents = FHSSchedule.getNextEvent().nextOccurence;
-				m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
-				m_doReMeasure = true;
 			}
+			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+			m_doReMeasure = true;
+			m_timetohelp = 0;
 		}
 		return true;
 	}	

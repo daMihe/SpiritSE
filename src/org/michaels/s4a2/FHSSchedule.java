@@ -81,10 +81,10 @@ public class FHSSchedule {
 		dayStart.set(Calendar.SECOND, 0);
 		dayStart.set(Calendar.MILLISECOND, 0);
 		long startSearch = (dayStart.getTimeInMillis()-weekStart.getTimeInMillis())/1000;
-		Cursor c = Data.db.rawQuery("SELECT start, room, title FROM Event e, Lecture l WHERE " +
-				"e.lecture = l.id AND start > ? AND start < ? AND (week = 3 OR week = ?) AND " +
-				"egroup = 0 UNION " +
-				"SELECT start, room, title FROM Event e, Usergroup u, Lecture l WHERE " +
+		Cursor c = Data.db.rawQuery("SELECT start, room, title, ltype FROM Event e, Lecture l " +
+				"WHERE e.lecture = l.id AND start > ? AND start < ? AND (week = 3 OR week = ?) " +
+				"AND egroup = 0 UNION " +
+				"SELECT start, room, title, ltype FROM Event e, Usergroup u, Lecture l WHERE " +
 				"e.lecture = u.lecture AND e.lecture = l.id AND start > ? AND start < ? AND " +
 				"(week = 3 OR week = ?) AND egroup = ugroup ORDER BY start",new String[]{
 					startSearch+"", (startSearch+86400)+"",
@@ -100,6 +100,7 @@ public class FHSSchedule {
 				e.nextOccurence.add(Calendar.SECOND, c.getInt(c.getColumnIndex("start")));
 				e.name = c.getString(c.getColumnIndex("title"));
 				e.room = c.getString(c.getColumnIndex("room"));
+				e.type = c.getInt(c.getColumnIndex("ltype"));
 				rtn.add(e);
 				c.moveToNext();
 			}

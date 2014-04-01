@@ -18,7 +18,7 @@
     <string name="about">Über</string>
     <string name="title_activity_about">Über Spirit SE</string>
     <string name="spirit_logo">Spirit Logo</string>
-    <string name="a_about_text">Du benutzt Spirit Second Edition, geschrieben von Michael Wodniok. Vielen Dank für die Nutzung dieser App. Kontakt für Ideen und zum Bugs melden: michix5d@gmail.com\n\nBenutzte Werkzeuge:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape\n- Mein Sony St25i</string>
+    <string name="a_about_text">Du benutzt Spirit Second Edition, geschrieben von Michael Wodniok. Vielen Dank für die Nutzung dieser App. Kontakt für Ideen und zum Bugs melden: michix5d@gmail.com\nVielen Dank an Marcus Denison für die Spirit-Platform sowie an alle, die daran mitgewirkt haben. Vielen Dank auch an Christian \"Wingguard\" Meißner, Michael \"Moga\" Dragunski und Tobias Anhalt für Tests auf mehreren Geräten.\n\nBenutzte Werkzeuge:\n- Eclipse\n- Android SDK + ADT\n- Oracle JRE\n- Inkscape</string>
     <string name="a_view_cou">Zeige Nutzungsbedingungen</string>
     <string name="a_donate">ein Bier spenden</string>
     <string name="p_filter_news">Filtere Nachrichten nach folgendem Semester</string>

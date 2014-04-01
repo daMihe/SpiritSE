@@ -1,5 +1,6 @@
 package org.michaels.s4a2.activities;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 import org.michaels.s4a2.Data;
@@ -21,7 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class HomeActivity extends FragmentActivity {
 
@@ -108,8 +111,10 @@ public class HomeActivity extends FragmentActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 				Bundle savedInstanceState){
-			m_newsList = (ListView) inflater.inflate(R.layout.home_news, container, false);
+			LinearLayout newsLayout = (LinearLayout) inflater.inflate(R.layout.home_news, 
+					container, false);
 			
+			m_newsList = (ListView) newsLayout.findViewById(R.id.h_newslist);
 			m_newsList.setAdapter(new NewsListAdapter());
 			m_newsList.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -120,7 +125,11 @@ public class HomeActivity extends FragmentActivity {
 				}
 			});
 			
-			return m_newsList;
+			TextView newsWeek = (TextView) newsLayout.findViewById(R.id.h_week);
+			newsWeek.setText(getActivity().getString(R.string.week)+" "+
+					Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
+			
+			return newsLayout;
 		}
 		
 		public void onResume(){

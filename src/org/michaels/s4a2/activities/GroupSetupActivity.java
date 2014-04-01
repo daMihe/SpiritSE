@@ -42,7 +42,7 @@ public class GroupSetupActivity extends ListActivity {
 				groupPicker.setMinValue(0);
 				groupPicker.setValue(c.isNull(c.getColumnIndex("ugroup")) ? 0 : 
 					c.getInt(c.getColumnIndex("ugroup")));
-				c.close();
+				c.close();		
 				groupPicker.setOnValueChangedListener(new OnValueChangeListener() {
 					
 					@Override
