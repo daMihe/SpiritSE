@@ -89,4 +89,7 @@
         <item >Samstag</item>
         
     </string-array>
+    
+    <string name="hs_holdforhelp">Hilfe nötig? Einfach drücken und halten!</string>
+    <string name="hs_helptext">Hoch- oder runterwischen um den Tag zu ändern. Doppelt tippen um zurückzusetzen. In den Einstellungen kann man den Stundenplan füllen oder ändern. Noch einmal halten, um die Hilfe auszublenden.</string>
 </resources>

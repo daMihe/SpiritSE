@@ -120,5 +120,7 @@
    	<string name="settings_bg_color_dialog">pick a background-color</string>
    	<string name="settings_default_color_confirm">default</string>
    	<string name="ss_color">set color of display</string>
+   	<string name="hs_holdforhelp">You need help? Simply hold!</string>
+   	<string name="hs_helptext">Just swipe up or down to change the day. Double tap to reset. To fill or change the plan go to the settings. Hold again to close the help.</string>
 
 </resources>

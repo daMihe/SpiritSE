@@ -19,12 +19,14 @@ public class NewsListAdapter implements ListAdapter {
 	ArrayList<String> m_titles;
 	ArrayList<Integer> m_ids;
 	ArrayList<Boolean> m_readstates;
+	ArrayList<String> m_newsgroups;
 	
 	public NewsListAdapter(){
 		m_observers = new ArrayList<DataSetObserver>();
 		m_titles = new ArrayList<String>();
 		m_ids = new ArrayList<Integer>();
 		m_readstates = new ArrayList<Boolean>();
+		m_newsgroups = new ArrayList<String>();
 		updatedData();
 	}
 	
@@ -45,6 +47,18 @@ public class NewsListAdapter implements ListAdapter {
 			m_titles.add(c.getString(c.getColumnIndex("title")));
 			m_ids.add(c.getInt(c.getColumnIndex("id")));
 			m_readstates.add(c.getInt(c.getColumnIndex("readstate")) != 0);
+			
+			Cursor c2 = Data.db.rawQuery("SELECT ngroup FROM Newsgroup WHERE News_id = ?", 
+					new String[]{c.getInt(c.getColumnIndex("id"))+""});
+			c2.moveToFirst();
+			String newsgroup = "";
+			while(!c2.isAfterLast()){
+				newsgroup += (newsgroup.isEmpty() ? "" : ", ")+c2.getString(c2.getColumnIndex("ngroup"));
+				c2.moveToNext();
+			}
+			c2.close();
+			m_newsgroups.add(newsgroup);
+			
 			c.moveToNext();
 		}
 		c.close();
@@ -69,20 +83,25 @@ public class NewsListAdapter implements ListAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView rtn;
-		if(convertView instanceof TextView)
-			rtn = (TextView) convertView;
+		View rtn;
+		if(convertView != null)
+			rtn = convertView;
 		else {
-			rtn = (TextView) LayoutInflater.from(parent.getContext()).
-					inflate(android.R.layout.simple_list_item_1, parent, false);
+			rtn = LayoutInflater.from(parent.getContext()).
+					inflate(android.R.layout.two_line_list_item, parent, false);
 		}
 		
+		TextView mainline = (TextView) rtn.findViewById(android.R.id.text1);
 		if(!m_readstates.get(position))
-			rtn.setTypeface(null, Typeface.BOLD);
+			mainline.setTypeface(null, Typeface.BOLD);
 		else
-			rtn.setTypeface(null, Typeface.NORMAL);
+			mainline.setTypeface(null, Typeface.NORMAL);		
+		mainline.setText(m_titles.get(position));
 		
-		rtn.setText(m_titles.get(position));
+		TextView subline = (TextView) rtn.findViewById(android.R.id.text2);
+		subline.setAlpha(0.6f);
+		subline.setText(m_newsgroups.get(position));
+		
 		return rtn;
 	}
 
