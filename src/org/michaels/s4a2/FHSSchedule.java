@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import android.database.Cursor;
+import android.util.Log;
 
 public class FHSSchedule {
 	public final static int LTYPE_LECTURE = 0;
@@ -34,7 +35,6 @@ public class FHSSchedule {
 				return e;
 		}
 		for(int i=0; i<14; i++){
-			//Log.i("DaytoSearch",start.toString());
 			start.add(Calendar.DAY_OF_MONTH, 1);
 			if(getEventsOfTheDay(start).length > 0)
 				return getEventsOfTheDay(start)[0];
@@ -49,26 +49,29 @@ public class FHSSchedule {
 		weekStart.set(Calendar.MINUTE, 0);
 		weekStart.set(Calendar.SECOND, 0);
 		weekStart.set(Calendar.MILLISECOND, 0);
-		if(weekStart.get(Calendar.MONTH) < Calendar.MARCH || weekStart.get(Calendar.MONTH) > Calendar.OCTOBER)
-			weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
-		if(weekStart.get(Calendar.MONTH) > Calendar.MARCH || weekStart.get(Calendar.MONTH) < Calendar.OCTOBER)
-			weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
-		if(weekStart.get(Calendar.MONTH) == Calendar.MARCH){
-			if(weekStart.get(Calendar.WEEK_OF_MONTH) == weekStart.
-					getActualMaximum(Calendar.WEEK_OF_MONTH))
-				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
-			else
-				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
-			return weekStart;
-		} else if(weekStart.get(Calendar.MONTH) == Calendar.OCTOBER){
-			if(weekStart.get(Calendar.WEEK_OF_MONTH) == weekStart.
-					getActualMaximum(Calendar.WEEK_OF_MONTH))
-				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0100"));
-			else
-				weekStart.setTimeZone(TimeZone.getTimeZone("GMT+0200"));
-			return weekStart;
-		} else
-			return weekStart;
+		weekStart.setTimeZone(TimeZone.getTimeZone("CET"));			
+		if(weekStart.get(Calendar.MONTH) > Calendar.MARCH || weekStart.get(Calendar.MONTH) <= Calendar.OCTOBER)
+			weekStart.set(Calendar.DST_OFFSET, 3600000);
+		if(weekStart.get(Calendar.MONTH) == Calendar.MARCH || isLastWeekOfMonth(weekStart))
+			weekStart.set(Calendar.DST_OFFSET, 3600000);
+		else if(weekStart.get(Calendar.MONTH) == Calendar.OCTOBER && isLastWeekOfMonth(weekStart))
+			weekStart.set(Calendar.DST_OFFSET,0);
+		return weekStart;
+	}
+	
+	public static boolean isLastWeekOfMonth(Calendar dayinweek){
+		Calendar nextweek = (Calendar) dayinweek.clone();
+		nextweek.add(Calendar.DAY_OF_YEAR, 7);
+		return (dayinweek.get(Calendar.MONTH) != nextweek.get(Calendar.MONTH));
+	}
+	
+	public static long getDSTRepairOffset(Calendar day){
+		Calendar weekStart = getWeekStart(day);
+		if(weekStart.get(Calendar.MONTH) == Calendar.MARCH && isLastWeekOfMonth(weekStart))
+			return -3600000;
+		if(weekStart.get(Calendar.MONTH) == Calendar.OCTOBER && isLastWeekOfMonth(weekStart))
+			return 3600000;
+		return 0;
 	}
 	
 	public static Event[] getEventsOfTheDay(Calendar day){

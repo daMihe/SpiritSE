@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -296,11 +297,13 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	 * Draws the countdown to the next event or shows how to get a schedule.
 	 * @param c A Canvas to draw on.
 	 */
-	private void drawCountdown(Canvas c) {
+	private void drawCountdown(Canvas c) {		
 		float timeToDraw = 0;
 		for(FHSSchedule.Event e:m_shownEvents){
-			if(e.nextOccurence.after(Calendar.getInstance())){
-				timeToDraw = e.nextOccurence.getTimeInMillis() - System.currentTimeMillis();
+			if(e.nextOccurence.getTimeInMillis() + FHSSchedule.getDSTRepairOffset(e.nextOccurence) >
+					System.currentTimeMillis()){
+				timeToDraw = e.nextOccurence.getTimeInMillis() + 
+						FHSSchedule.getDSTRepairOffset(e.nextOccurence) - System.currentTimeMillis();
 				break;
 			}
 		}
@@ -342,7 +345,8 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		for(int i=0; i<m_shownEvents.length; i++){
 			String current = String.format("%02d.%02d/%s: %s %s", 
-					m_shownEvents[i].nextOccurence.get(Calendar.HOUR_OF_DAY),
+					m_shownEvents[i].nextOccurence.get(Calendar.HOUR_OF_DAY)+ 
+					FHSSchedule.getDSTRepairOffset(m_shownEvents[i].nextOccurence)/3600000,
 					m_shownEvents[i].nextOccurence.get(Calendar.MINUTE),
 					m_shownEvents[i].room, m_shownEvents[i].name, getContext().
 					getString(m_shownEvents[i].type == FHSSchedule.LTYPE_EXERCISE ? 
@@ -359,6 +363,10 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 	
+	/**
+	 * drawHelp - draws a help for the users. Only draws something if m_showhelp is set to true.
+	 * @param c A canvas to draw on.
+	 */
 	private void drawHelp(Canvas c) {
 		if(m_showhelp){			
 			PointF center = new PointF(getWidth()/2, getHeight()/2);
@@ -455,10 +463,8 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 		public boolean onDoubleTap (MotionEvent e){
 			m_listingCurrentDay = true;
 			m_dayOfShownEvents = FHSSchedule.getNextEvent().nextOccurence;
-			return false;
-		}
-		public boolean onSingleTapConfirmed (MotionEvent e){
-			Log.d("VOGL","SingleTap?!");
+			m_shownEvents = FHSSchedule.getEventsOfTheDay(m_dayOfShownEvents);
+			m_doReMeasure = true;
 			return false;
 		}
 	}
