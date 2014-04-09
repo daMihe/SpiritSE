@@ -1,31 +1,24 @@
 package org.michaels.s4a2;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.Path.FillType;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -56,7 +49,7 @@ public class ScheduleView extends SurfaceView implements SurfaceHolder.Callback,
 	private static Calendar m_dayOfShownEvents;
 	private static boolean m_listingCurrentDay;
 	private RectF m_hourRect, m_minRect, m_secRect;
-	private PointF m_centerTimeCircle, m_fingerDownCoords;
+	private PointF m_centerTimeCircle;
 	private float m_circleTextHeight, m_dateTextHeight, m_eventTextHeight, m_radius;
 	private GestureDetectorCompat m_gestureDetector;
 	

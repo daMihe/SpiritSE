@@ -55,6 +55,8 @@ public class EventSpinAdapter extends S4A2BaseAdapter {
 			c.moveToNext();
 		}
 		c.close();
+		
+		notifyObservers();
 	}
 	
 	@Override

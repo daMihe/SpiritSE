@@ -21,10 +21,21 @@ Features
 - Showing schedule
 - Filter News
 - Personalize event groups
-- Displaying a widget with the next event
+- Displaying a widget with the next events
 
 Requirements of the app
 -----------------------
 - Android 4.0.3 (= API-Level 15) or higher
 - Some space on your phone (currently less than 2MB)
 - Sometimes a internet connection (when downloading schedule or news)
+
+Planned features
+----------------
+- auto-update of news (not at start of the app) and showing count of unread news in the widget
+- better overall usability 
+- better/simpler color chooser (currently it's a 3rd party one)
+
+Credits
+-------
+See in the app for all people who helped. Main author is Michael Wodniok. More information at 
+http://noorganization.org/spirit (only in german).

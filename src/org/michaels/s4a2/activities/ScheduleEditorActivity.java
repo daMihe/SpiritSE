@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -26,6 +27,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class ScheduleEditorActivity extends Activity {
 	
@@ -51,25 +53,35 @@ public class ScheduleEditorActivity extends Activity {
 	}
 
 	private void prepareDeleteButtons() {
-		((Button) findViewById(R.id.ase_lecture_delete)).setOnClickListener(new OnClickListener() {
-			
+		((Button) findViewById(R.id.ase_lecture_delete)).setOnLongClickListener(new OnLongClickListener() {
 			@Override
-			public void onClick(View v) {
+			public boolean onLongClick(View v) {
 				Data.db.delete("Event", "lecture = ?", new String[]{ m_lectureId+""});
 				Data.db.delete("Lecture", "id = ?", new String[]{ m_lectureId+""});
 				((Spinner) findViewById(R.id.ase_lecturelist)).setSelection(0);
 				m_listAdapter.updateLectures();
+				return true;
 			}
 		});
-		((Button) findViewById(R.id.ase_event_delete)).setOnClickListener(new OnClickListener() {
-			
+		((Button) findViewById(R.id.ase_event_delete)).setOnLongClickListener(new OnLongClickListener() {	
 			@Override
-			public void onClick(View v) {
+			public boolean onLongClick(View v) {
 				Data.db.delete("Event", "id = ?", new String[]{ m_eventId+""});
 				((Spinner) findViewById(R.id.ase_lecture_eventspinner)).setSelection(0);
 				m_eventAdapter.updateEvents();
+				return true;
 			}
 		});
+		
+		
+		OnClickListener shortTapListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(ScheduleEditorActivity.this, R.string.ase_long_tap_to_delete, Toast.LENGTH_SHORT).show();
+			}
+		};
+		((Button) findViewById(R.id.ase_lecture_delete)).setOnClickListener(shortTapListener);
+		((Button) findViewById(R.id.ase_event_delete)).setOnClickListener(shortTapListener);
 	}
 
 	private void prepareEventChangeListeners() {
@@ -305,7 +317,7 @@ public class ScheduleEditorActivity extends Activity {
 				new String[]{
 					((EditText)findViewById(R.id.ase_lecture_title)).getText().toString(), 
 					((EditText)findViewById(R.id.ase_lecture_lecturer)).getText().toString(),
-					(((RadioButton)findViewById(R.id.ase_lecture_type_lecture)).isSelected() ?
+					(((RadioButton)findViewById(R.id.ase_lecture_type_lecture)).isChecked() ?
 							FHSSchedule.LTYPE_LECTURE : FHSSchedule.LTYPE_EXERCISE)+"",
 					m_lectureId+""
 				});
@@ -349,7 +361,6 @@ public class ScheduleEditorActivity extends Activity {
 		
 		m_eventAdapter.updateEvents();
 	}
-
 	
 	private void setLectureInputsFromDB(final long id) {
 		Cursor c = Data.db.rawQuery("SELECT title, ltype, lecturer FROM Lecture WHERE "

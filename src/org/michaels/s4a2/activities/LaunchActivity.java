@@ -1,7 +1,6 @@
 package org.michaels.s4a2.activities;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Random;
 
 import org.michaels.s4a2.Data;
@@ -17,11 +16,20 @@ import android.util.Log;
 import android.widget.TextView;
 
 public class LaunchActivity extends Activity {
+	
+	private boolean launch;
+	
+	@Override
+	protected void onStop(){
+		launch = false;
+		super.onStop();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_launch);
+		launch = true;
 		
 		String randomsplashes[] = getResources().getStringArray(R.array.l_splashes);
 		TextView splashView = ((TextView) findViewById(R.id.l_splash));
@@ -79,7 +87,6 @@ public class LaunchActivity extends Activity {
 				
 				Log.i("Spirit SE Information", "Device ID: "+
 						Data.preferences.getString("deviceId", "0"));
-				
 				if(System.currentTimeMillis()- (Data.preferences.
 						getLong(Data.PREF_UPDATE_INTERVAL, 86400L)*1000) >
 						Data.preferences.getLong(Data.PREF_LAST_UPDATE, 0L)){
@@ -91,7 +98,8 @@ public class LaunchActivity extends Activity {
 					waiter.join();
 				} catch (InterruptedException e) {}
 				
-				startActivity(new Intent(LaunchActivity.this, HomeActivity.class));
+				if(launch)
+					startActivity(new Intent(LaunchActivity.this, HomeActivity.class));
 				LaunchActivity.this.finish();
 			}
 		});

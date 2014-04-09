@@ -47,13 +47,14 @@ public class WidgetProvider extends AppWidgetProvider {
 		if(nextevent == null)
 			rtn = (String) context.getText(R.string.hs_noeventsinschedule);
 		else {
-			rtn = DateFormat.getDateInstance(DateFormat.SHORT).format(nextevent.nextOccurence.getTime())+"\n"
-					+ DateFormat.getTimeInstance(DateFormat.SHORT).format(nextevent.nextOccurence.getTime()) + "/"
-					+ nextevent.room + "\n" + nextevent.name + " ";
-			if(nextevent.type == FHSSchedule.LTYPE_EXERCISE)
-				rtn += context.getText(R.string.exercise);
-			else
-				rtn += context.getText(R.string.lecture);
+			DateFormat shortTimeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+			rtn = DateFormat.getDateInstance(DateFormat.SHORT).format(nextevent.nextOccurence.getTime())+"\n";
+			for(FHSSchedule.Event e:FHSSchedule.getEventsOfTheDay(nextevent.nextOccurence)){
+				rtn += shortTimeFormat.format(e.nextOccurence.getTime()) + "/"
+					+ e.room + ": " + e.name + " " + 
+					context.getText(nextevent.type == FHSSchedule.LTYPE_EXERCISE ? 
+							R.string.exercise : R.string.lecture) + "\n";
+			}
 		}
 		views.setTextViewText(R.id.w_label, rtn);
 		

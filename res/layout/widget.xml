@@ -5,7 +5,7 @@
     android:background="#ff000000"
     android:orientation="vertical"
     android:id="@+id/w_layout"
-    android:padding="10dp" >
+    android:padding="3dp">
 
     <TextView 
         android:id="@+id/w_label"

@@ -115,6 +115,7 @@
    	<string name="ase_add_new_lecture">&lt;add new lecture&gt;</string>
    	<string name="ase_add_new_event">&lt;add new event&gt;</string>
    	<string name="ase_parse_error_start">Error: could not parse start-time.</string>
+   	<string name="ase_long_tap_to_delete">Tap and hold to delete.</string>
    	
    	<string name="settings_bg_color_confirm">okay</string>
    	<string name="settings_bg_color_dialog">pick a background-color</string>

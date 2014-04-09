@@ -73,6 +73,7 @@
    	<string name="ase_none">&lt;nichts ausgewählt&gt;</string>
    	<string name="ase_add_new_lecture">&lt;neue Veranstaltung&gt;</string>
    	<string name="ase_add_new_event">&lt;neues Event&gt;</string>
+   	<string name="ase_long_tap_to_delete">Halten zum Löschen.</string>
    	
    	<string name="settings_bg_color_confirm">Okay</string>
    	<string name="settings_bg_color_dialog">Wähle eine Hintergrundfarbe</string>

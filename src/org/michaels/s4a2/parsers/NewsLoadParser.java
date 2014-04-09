@@ -24,7 +24,6 @@ import org.michaels.s4a2.SomeFunctions;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
-import android.util.Log;
 
 public class NewsLoadParser {
 	/**
@@ -38,7 +37,6 @@ public class NewsLoadParser {
 		if(toParse == null)
 			return;
 		parseAndSave(toParse, context);
-		Log.i("","Updated News!");
 		Editor e = Data.preferences.edit();
 		e.putLong(Data.PREF_LAST_UPDATE, System.currentTimeMillis());
 		e.apply();
