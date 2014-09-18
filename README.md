@@ -1,10 +1,9 @@
 Spirit SE
 =========
 
-*WARNING! This project is currently under early development and NOT stable. So
-do not expect too much features, the repository may changes very fast. The repo 
-also may contain experimental states which are not working or won't be 
-implemented when a first stable version will be released.*
+*SpiritSE reached it's end of life. It wont be supported, but you can use
+it if you want. The App itself works and is relative stable. As Spirit will be
+replaced by stud.ip, further development seems to be pointless.*
 
 Spirit Second Edition, written 2013-2014 by Michael Wodniok.
 Spirit is a news and schedule platform by the FH Schmalkalden for their 
